@@ -1,0 +1,7 @@
+postgresql:
+    image: postgres:9.6
+    environment:
+        POSTGRES_USER: pulse
+        POSTGRES_DB: pulse
+    ports:
+        - "45432:5432"
