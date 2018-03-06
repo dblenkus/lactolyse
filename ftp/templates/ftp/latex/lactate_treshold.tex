@@ -1,23 +1,105 @@
 \documentclass{article}
+\title{Poročilo Laktatni test}
+\author{Simon Cirnski}
+
+\usepackage[margin=0.7in]{geometry}
+
+\usepackage{makecell}
+\usepackage{multirow}
+
+\usepackage{tikz,pgfplots}
+\usetikzlibrary{calc}
+
 \begin{document}
-\section{Example}
-An example document using \LaTeX, Python, and Jinja.
 
-% This is a regular LaTeX comment
-\section{\VAR{section1}}
-\#{This is a long-form Jinja comment}
-\begin{itemize}
-\BLOCK{ for x in range(0, 3) }
-  \item Counting: \VAR{x}
-\BLOCK{ endfor }
-\end{itemize}
+  \maketitle
 
-\section{\VAR{section2}}
-%# This is a short-form Jinja comment
-\begin{itemize}
-%% for x in range(0, 3)
-  \item Counting: \VAR{x}
-%% endfor
-\end{itemize}
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{r||c|c|c|c|}
+                           & Power [W]                        & Heart Rate [bpm]                      & Power to Weight Ratio [W/kg]                                 & Blood Lactate [mMol]                           \\ \hline \hline
+      \BLOCK{ for i in range( inputs['power'] | length) }
+        \VAR{ loop.index } & \VAR{ inputs['power'][i] | int } & \VAR{ inputs['heart_rate'][i] | int } & \VAR{ '%.2f' | format(inputs['power'][i]/inputs['weight']) } & \VAR{ '%.1f' | format(inputs['lactate'][i]) }  \BLOCK{ if not loop.last }\\\BLOCK{ endif }
+      \BLOCK{ endfor }
+    \end{tabular}
+    \caption{Meritve}
+  \end{table}
+
+  \def\lacpoly(#1){\VAR{ lac_poly.coef[0] }*(#1)^3 + \VAR{ lac_poly.coef[1] }*(#1)^2 +  \VAR{ lac_poly.coef[2] }*(#1) + \VAR{ lac_poly.coef[3] }}
+  \def\coordinates{
+    \BLOCK{ for i in range( inputs['power'] | length) }
+      (\VAR{ inputs['power'][i] }, \VAR{ inputs['lactate'][i] })
+    \BLOCK{ endfor }
+  }
+  \def\xmin{\VAR{ inputs['power'][0] }}
+  \def\xmax{\VAR{ inputs['power'][-1] }}
+  \def\ymin{0}
+  \def\ymax{\VAR{ inputs['lactate'][-1] }}
+
+  \pgfplotsset{
+    axis y line=left,
+    ylabel near ticks,
+    ylabel=Blood Lactate {[}mMol{]},
+    ytick={0,2,...,50},
+    axis x line=bottom,
+    xlabel=Power {[}W{]},
+    xtick={0, 50,..., 500},
+    width=8.5cm,
+    height=8.5cm,
+    xmin=\xmin - 40,
+    xmax=\xmax + 40,
+    ymin=0,
+    ymax=\ymax + 2,
+    grid,
+  }
+
+  \begin{tikzpicture}
+  \begin{axis}
+    \coordinate (start) at (axis cs: \VAR{ dmax['start_point'][0] }, \VAR{ dmax['start_point'][1] });
+    \coordinate (dmax) at (axis cs: \VAR{ dmax['power'] }, \VAR{ dmax['lactate'] });
+    \coordinate (end) at (axis cs: \VAR{ inputs['power'][-1] }, \VAR{ inputs['lactate'][-1] });
+    \coordinate (dmax') at ($(start)!(dmax)!(end)$);
+    \coordinate (dmax'') at (axis cs: \VAR{ dmax['power'] }, 0);
+
+    \addplot [domain=\xmin-20:\xmax+20, thick] {\lacpoly(x)};
+    \addplot [only marks] coordinates {\coordinates};
+    \draw [thick] (start) -- (end);
+    \draw [thick] (dmax') -- (dmax);
+    \draw [thick] (dmax'') -- (dmax) node[pos=0.5, right] {$P=\VAR{ dmax['power'] | int }W$};
+  \end{axis}
+  \end{tikzpicture}
+  \begin{tikzpicture}[
+    extended line/.style={shorten >=-#1},
+    extended line/.default=.5cm,
+  ]
+  \begin{axis}
+    \coordinate (start) at (axis cs: \VAR{ inputs['power'][0] }, \VAR{ inputs['lactate'][0] });
+    \coordinate (cross) at (axis cs: \VAR{ cross['cross'][0] }, \VAR{ cross['cross'][1] });
+    \coordinate (end) at (axis cs: \VAR{ inputs['power'][-1] }, \VAR{ inputs['lactate'][-1] });
+    \coordinate (cross') at (axis cs: \VAR{ cross['cross'][0] }, 0);
+
+    \addplot [domain=\xmin-20:\xmax+20, thick] {\lacpoly(x)};
+    \addplot [only marks] coordinates {\coordinates};
+    \draw [thick, extended line] (start) -- (cross);
+    \draw [thick, extended line] (end) -- (cross);
+    \draw [thick] (cross') -- (cross) node[pos=0.5, right] {$P=\VAR{ cross['power'] | int }W$};
+  \end{axis}
+  \end{tikzpicture}
+
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{r|r||c|c|c|c}
+                                                         &                     & Power [W]                     & Heart Rate [bpm]                   & \makecell{Power to Weight \\ Ratio [W/kg]}                & \makecell{Blood Lactate \\ {[}mMol]}       \\
+      \hline \hline
+      \multirow{4}{*}{\makecell{Anaerobic \\ threshold}} & Modified D-max      & \VAR{ dmax['power'] | int }   & \VAR{ dmax['heart_rate'] | int }   & \VAR{ '%.2f' | format(dmax['power']/inputs['weight']) }   & \VAR{ '%.1f' | format(dmax['lactate']) }   \\
+                                                         & Cross method        & \VAR{ cross['power'] | int }  & \VAR{ cross['heart_rate'] | int }  & \VAR{ '%.2f' | format(cross['power']/inputs['weight']) }  & \VAR{ '%.1f' | format(cross['lactate']) }  \\
+                                                         & AT4 4 mMol          & \VAR{ at4['power'] | int }    & \VAR{ at4['heart_rate'] | int }    & \VAR{ '%.2f' | format(at4['power']/inputs['weight']) }    & \VAR{ '%.1f' | format(at4['lactate']) }    \\
+                                                         & FTP (miss)          & \VAR{ ftp['power'] | int }    & \VAR{ ftp['heart_rate'] | int }    & \VAR{ '%.2f' | format(ftp['power']/inputs['weight']) }    & \VAR{ '%.1f' | format(ftp['lactate']) }    \\
+      \hline
+      \multirow{2}{*}{\makecell{Aerobic \\ threshold}}   & Baseline + 0.5 mMol & \VAR{ dmax['start_point'][0] | int }   & \VAR{ dmax['start_hr'] | int }   & \VAR{ '%.2f' | format(dmax['start_point'][0]/inputs['weight']) }   & \VAR{ '%.1f' | format(dmax['start_point'][1]) } \\
+                                                         & AT2 2 mMol          & \VAR{ at2['power'] | int }    & \VAR{ at2['heart_rate'] | int }    & \VAR{ '%.2f' | format(at2['power']/inputs['weight']) }    & \VAR{ '%.1f' | format(at2['lactate']) }
+    \end{tabular}
+    \caption{Rezultati testa}
+  \end{table}
 
 \end{document}
