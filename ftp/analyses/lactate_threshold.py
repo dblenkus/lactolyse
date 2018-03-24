@@ -118,8 +118,6 @@ class LactateThresholdAnalyses(BaseAnalysis):
         dmax_context = self._calculate_dmax_context(inputs, lac_poly, hr_poly)
         cross_context = self._calculate_cross_context(inputs, lac_poly, hr_poly)
 
-        import ipdb; ipdb.set_trace()
-
         return {
             'inputs': inputs,
             'lac_poly': lac_poly,

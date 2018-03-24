@@ -1,0 +1,46 @@
+{% extends '__base__.html' %}
+{% load i18n material_form %}
+
+{% block content %}
+
+<div class="row">
+
+  <h1 class="center-align">Lactate threshold test</h2>
+
+  <div class="col l6 offset-l3 m8 offset-m2 s12">
+
+    {% if messages %}
+      {% for message in messages %}
+        <blockquote>{{ message }}</blockquote>
+      {% endfor %}
+    {% endif %}
+
+    <form action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      {% form form=forms.athlete %}{% endform %}
+
+      {{ forms.measurements.management_form }}
+      {% for form in forms.measurements %}
+        {% form form=form %}
+          {% part form.power label %}
+            <label for="{{ bound_field.id_for_label }}">Power #{{ forloop.counter }}</label>
+          {% endpart %}
+          {% part form.heart_rate label %}
+            <label for="{{ bound_field.id_for_label }}">Heart Rate #{{ forloop.counter }}</label>
+          {% endpart %}
+          {% part form.lactate label %}
+            <label for="{{ bound_field.id_for_label }}">Lactate #{{ forloop.counter }}</label>
+          {% endpart %}
+        {% endform %}
+      {% endfor %}
+
+      <div class="center-align">
+        <button type="submit" name="_submit" class="btn-large waves-effect waves-light">
+          {% trans 'Submit' %}
+        </button>
+      </div>
+
+    </form>
+
+{% endblock content %}

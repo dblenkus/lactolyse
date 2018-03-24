@@ -1,0 +1,40 @@
+{% load static %}
+
+<!DOCTYPE html>
+
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  {% block meta_tags %}
+  {% endblock meta_tags %}
+
+  <title>{% block title %}Pulse performance{% endblock %}</title>
+
+  <link rel="shortcut icon" href="{% static "favicon.ico"  %}" />
+
+  {% include 'material/includes/material_css.html' %}
+  <link rel='stylesheet' href="{% static "ftp/css/custom.css" %}" />
+</head>
+
+
+<body>
+  <header>
+    {% include '__header__.html' %}
+  </header>
+
+  <main class="container">
+    {% block content %}
+    {% endblock content %}
+  </main>
+
+  <footer class="page-footer {{ materialize_color }}">
+    {% include '__footer__.html' %}
+  </footer>
+
+  <script src="{% static 'material/js/jquery.js' %}"></script>
+  {% include 'material/includes/material_js.html' %}
+</body>
+
+</html>

@@ -1,0 +1,25 @@
+{% extends '__base__.html' %}
+{% load i18n material_form %}
+
+{% block content %}
+
+<div class="row">
+
+  <h1 class="center-align">Login</h2>
+
+  <div class="col l4 offset-l4 m6 offset-m3 s12">
+
+    <form method="post">
+      {% csrf_token %}
+
+      {% form form=form %}{% endform %}
+
+      <div class="center-align">
+        <button type="submit" name="_submit" class="btn-large waves-effect waves-light">
+          {% trans 'Login' %}
+        </button>
+      </div>
+
+    </form>
+
+{% endblock content %}

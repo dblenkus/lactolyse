@@ -1,0 +1,14 @@
+{% extends '__base__.html' %}
+{% load i18n %}
+
+{% block meta_tags %}
+{% if 'download' in request.session %}
+<meta http-equiv="refresh" content="0; url={% url 'download_file' %}"/>
+{% endif %}
+{% endblock meta_tags %}
+
+{% block content %}
+
+  <h1 class="center-align">{% trans "Thank you!" %}</h1>
+
+{% endblock content %}
