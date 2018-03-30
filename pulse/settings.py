@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'channels',
     'material',
 
     'ftp',
@@ -75,6 +76,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'pulse.wsgi.application'
+
+ASGI_APPLICATION = "pulse.routing.application"
 
 
 # Database

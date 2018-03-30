@@ -1,3 +1,4 @@
+channels~=2.0.2
 Django~=2.0.0
 django-material~=1.2.2
 docker~=3.0.0
