@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'channels',
     'material',
 
-    'ftp',
+    'lactolyse',
 ]
 
 MIDDLEWARE = [

@@ -1,8 +1,8 @@
 from django.apps import AppConfig
 
 
-class FtpConfig(AppConfig):
-    name = 'ftp'
+class LactolyseConfig(AppConfig):
+    name = 'lactolyse'
 
     def ready(self):
         """Perform application initialization."""

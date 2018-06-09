@@ -15,7 +15,7 @@ latex_jinja_env = jinja2.Environment(
     line_comment_prefix='%#',
     trim_blocks=True,
     autoescape=False,
-    loader=jinja2.PackageLoader('ftp', os.path.join('templates', 'ftp', 'latex'))
+    loader=jinja2.PackageLoader('lactolyse', os.path.join('templates', 'lactolyse', 'latex'))
 )
 
 

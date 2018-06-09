@@ -9,15 +9,15 @@ from django.forms import formset_factory
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 
-from ftp.executors import executor
-from ftp.forms import AthleteForm, LactateMeasurementForm
-from ftp.models import LactateThresholdAnalyses
+from lactolyse.executors import executor
+from lactolyse.forms import AthleteForm, LactateMeasurementForm
+from lactolyse.models import LactateThresholdAnalyses
 
 from .base import MultiFormView
 
 
 class LactateThresholdView(LoginRequiredMixin, MultiFormView):
-    template_name = os.path.join('ftp', 'lactate_threshold.html')
+    template_name = os.path.join('lactolyse', 'lactate_threshold.html')
     analyses_name = 'lactate_threshold'
     success_url = reverse_lazy('analyses_success')
 

@@ -2,7 +2,7 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import ftp.models
+import lactolyse.models
 
 
 class Migration(migrations.Migration):
@@ -36,13 +36,13 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created', models.DateField(auto_now_add=True)),
-                ('report', models.FileField(upload_to=ftp.models.generate_lactate_threshold_name)),
-                ('athlete', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ftp.Athlete')),
+                ('report', models.FileField(upload_to=lactolyse.models.generate_lactate_threshold_name)),
+                ('athlete', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lactolyse.Athlete')),
             ],
         ),
         migrations.AddField(
             model_name='lactatemeasurement',
             name='analyses',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ftp.LactateThresholdAnalyses'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lactolyse.LactateThresholdAnalyses'),
         ),
     ]

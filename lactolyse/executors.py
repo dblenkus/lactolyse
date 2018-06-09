@@ -9,7 +9,7 @@ environment and run all analyses.
 
 At the moment only Docker executor is implemented:
 
-.. autoclass:: ftp.executors.DockerExecutor
+.. autoclass:: lactolyse.executors.DockerExecutor
     :members:
 
 """
@@ -24,13 +24,13 @@ from importlib import import_module
 
 import docker
 
-from ftp.analyses.base import BaseAnalysis
+from lactolyse.analyses.base import BaseAnalysis
 
 logger = logging.getLogger(__name__)
 
 __all__ = ('executor',)
 
-ANALYSES_PACKAGE = 'ftp.analyses'
+ANALYSES_PACKAGE = 'lactolyse.analyses'
 DOCKER_IMAGE = 'latex:latest'
 DOCKER_START_COMMAND = "/bin/sh -c 'sleep infinity'"
 DOCKER_MOUNT_POINT = '/mnt'
