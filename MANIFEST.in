@@ -1,0 +1,6 @@
+# include meta data
+include LICENSE
+# include tests and files needed by tests
+recursive-include lactolyse/tests *.py
+# include Dockerfiles and files needed to build Docker images
+recursive-include lactolyse/docker_images Dockerfile
