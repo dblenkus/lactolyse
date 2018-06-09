@@ -19,12 +19,17 @@ class LactateThresholdAnalyses(BaseAnalysis):
 
         # Determine where polynomial is the "most horizontal", i.e. root
         # of second derivative.
-        min_x = np.roots(lac_poly.deriv().deriv())[0]
+
+        min_x = np.roots(lac_poly.deriv())
+        min_x = filter(lambda val: inputs['power'][0] < val < inputs['power'][-1], min_x)
+        min_x = list(min_x)[0]
 
         # Find the point where polynomial starts to raise - threshold is
         # 0.5 - and take only real roots (hopefully there is only one).
         roots = np.roots(lac_poly - (lac_poly(min_x) + 0.5))
         roots = roots[np.isreal(roots)]
+        roots = filter(lambda val: min_x < val < inputs['power'][-1], roots)
+        roots = list(roots)
 
         # if len(roots) != 1:
         #     msg = "Something strange happened, there is more than one root."
@@ -36,7 +41,7 @@ class LactateThresholdAnalyses(BaseAnalysis):
 
         # Calculate the vector cross product.
         v_x = np.poly1d(inputs['power'][-1] - start_point[0])
-        v_y = np.poly1d(inputs['lactate'][-1] - start_point[1])
+        v_y = np.poly1d(lac_poly(inputs['power'][-1]) - start_point[1])
         u_x = np.poly1d([1, -start_point[0]])
         u_y = lac_poly - np.poly1d(start_point[1])
         cross_z = v_x * u_y - v_y * u_x
@@ -56,6 +61,7 @@ class LactateThresholdAnalyses(BaseAnalysis):
         return {
             'power': ftp,
             'start_point': start_point,
+            'end_point': [inputs['power'][-1], lac_poly(inputs['power'][-1])],
             'start_hr': hr_poly(start_point[0]),
             'heart_rate': hr_poly(ftp),
             'lactate': lac_poly(ftp),
@@ -65,14 +71,14 @@ class LactateThresholdAnalyses(BaseAnalysis):
         start_line = np.poly1d(
             np.polyfit(
                 [inputs['power'][0], inputs['power'][0] + 5],
-                [inputs['lactate'][0], lac_poly(inputs['power'][0] + 5)],
+                [lac_poly(inputs['power'][0] ), lac_poly(inputs['power'][0] + 5)],
                 1
             )
         )
         end_line = np.poly1d(
             np.polyfit(
                 [inputs['power'][-1] - 5, inputs['power'][-1]],
-                [lac_poly(inputs['power'][-1] - 5), inputs['lactate'][-1]],
+                [lac_poly(inputs['power'][-1] - 5), lac_poly(inputs['power'][-1])],
                 1
             )
         )
@@ -82,6 +88,8 @@ class LactateThresholdAnalyses(BaseAnalysis):
 
         return {
             'power': power,
+            'start_point': [inputs['power'][0], lac_poly(inputs['power'][0])],
+            'end_point': [inputs['power'][-1], lac_poly(inputs['power'][-1])],
             'cross': [power, start_line(power)],
             'heart_rate': hr_poly(power),
             'lactate': lac_poly(power),

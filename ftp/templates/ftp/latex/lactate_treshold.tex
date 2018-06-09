@@ -57,7 +57,7 @@
   \begin{axis}
     \coordinate (start) at (axis cs: \VAR{ dmax['start_point'][0] }, \VAR{ dmax['start_point'][1] });
     \coordinate (dmax) at (axis cs: \VAR{ dmax['power'] }, \VAR{ dmax['lactate'] });
-    \coordinate (end) at (axis cs: \VAR{ inputs['power'][-1] }, \VAR{ inputs['lactate'][-1] });
+    \coordinate (end) at (axis cs: \VAR{ dmax['end_point'][0] }, \VAR{ dmax['end_point'][1] });
     \coordinate (dmax') at ($(start)!(dmax)!(end)$);
     \coordinate (dmax'') at (axis cs: \VAR{ dmax['power'] }, 0);
 
@@ -73,9 +73,9 @@
     extended line/.default=.5cm,
   ]
   \begin{axis}
-    \coordinate (start) at (axis cs: \VAR{ inputs['power'][0] }, \VAR{ inputs['lactate'][0] });
+    \coordinate (start) at (axis cs: \VAR{ cross['start_point'][0] }, \VAR{ cross['start_point'][1] });
     \coordinate (cross) at (axis cs: \VAR{ cross['cross'][0] }, \VAR{ cross['cross'][1] });
-    \coordinate (end) at (axis cs: \VAR{ inputs['power'][-1] }, \VAR{ inputs['lactate'][-1] });
+    \coordinate (end) at (axis cs: \VAR{ cross['end_point'][0] }, \VAR{ cross['end_point'][1] });
     \coordinate (cross') at (axis cs: \VAR{ cross['cross'][0] }, 0);
 
     \addplot [domain=\xmin-20:\xmax+20, thick] {\lacpoly(x)};
