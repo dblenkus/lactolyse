@@ -1,7 +1,7 @@
 postgresql:
     image: postgres:9.6
     environment:
-        POSTGRES_USER: pulse
-        POSTGRES_DB: pulse
+        POSTGRES_USER: lactolyse
+        POSTGRES_DB: lactolyse
     ports:
         - "45432:5432"
