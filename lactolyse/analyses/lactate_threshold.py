@@ -135,3 +135,12 @@ class LactateThresholdAnalyses(BaseAnalysis):
             'at2': self._calculate_at_context(inputs, 2, lac_poly, hr_poly),
             'at4': self._calculate_at_context(inputs, 4, lac_poly, hr_poly),
         }
+
+    def get_results(self, context):
+        """Return the result of the analysis."""
+        return{
+            'dmax': context['dmax']['power'],
+            'cross': context['cross']['power'],
+            'at2': context['at2']['power'],
+            'at4': context['at4']['power'],
+        }

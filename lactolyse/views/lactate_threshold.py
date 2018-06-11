@@ -82,7 +82,7 @@ class LactateThresholdView(LoginRequiredMixin, MultiFormView):
 
         return analyses, athlete, measurements
 
-    def _make_report(self, analyses, athlete, measurements):
+    def _make_report(self, analysis, athlete, measurements):
         inputs = {
             'power': [int(m.power) for m in measurements],
             'heart_rate': [int(m.heart_rate) for m in measurements],
@@ -93,21 +93,27 @@ class LactateThresholdView(LoginRequiredMixin, MultiFormView):
         report_dir = tempfile.TemporaryDirectory()
         report_path = os.path.join(report_dir.name, 'report.pdf')
 
-        executor.run(self.analyses_name, report_path, inputs)
+        results = executor.run(self.analyses_name, report_path, inputs)
+
+        analysis.result_dmax = results['dmax']
+        analysis.result_cross = results['cross']
+        analysis.result_at2 = results['at2']
+        analysis.result_at4 = results['at4']
 
         with open(report_path, 'rb') as fn:
             report_file = File(fn)
-            analyses.report = report_file
-            analyses.save()
+            analysis.report = report_file
+
+            analysis.save()
 
     def forms_valid(self, forms):
 
-        analyses, athlete, measurements = self._save_data(forms)
-        self._make_report(analyses, athlete, measurements)
+        analysis, athlete, measurements = self._save_data(forms)
+        self._make_report(analysis, athlete, measurements)
 
         # Set download file for download view.
         self.request.session['download'] = {
-            'file_path': analyses.report.name,
+            'file_path': analysis.report.name,
             # 'file_name': "Report - {}.pdf".format(athlete.name),
             'file_name': "Report.pdf",
         }

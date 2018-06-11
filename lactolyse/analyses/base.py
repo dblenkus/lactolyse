@@ -58,7 +58,7 @@ class BaseAnalysis:
     def run_render_context(self, *args, **kwargs):
         """Run ``render_context`` and save the result.
 
-        This is a utiliti function that simplify writing of
+        This is a utility function that simplify writing of
         ``render_context`` function and remove the need of directly
         accessing ``self._context`` argument.
         """
@@ -74,3 +74,20 @@ class BaseAnalysis:
 
         with open(self._tex_file, 'w', encoding="utf-8") as fn:
             fn.write(self._rendered_template)
+
+    def get_results(self, context):
+        """Return the result of the analysis.
+
+        This function should be overriden in subclass.
+        """
+        return {}
+
+    def run_get_results(self):
+        """Run ``get_results`` and pass the context to it.
+
+        This is a utility function that simplify writing of
+        ``get_results`` function and remove the need of directly
+        accessing ``self._context`` argument.
+        """
+        return self.get_results(self._context)
+

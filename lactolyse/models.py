@@ -41,6 +41,14 @@ class LactateThresholdAnalyses(models.Model):
 
     report = models.FileField(upload_to=generate_lactate_threshold_name)
 
+    result_dmax = models.IntegerField(null=True)
+
+    result_cross = models.IntegerField(null=True)
+
+    result_at2 = models.IntegerField(null=True)
+
+    result_at4 = models.IntegerField(null=True)
+
     def __str__(self):
         return "athlete: {}, date: {}".format(self.athlete.name, self.created)
 

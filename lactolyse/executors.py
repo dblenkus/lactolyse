@@ -198,5 +198,7 @@ class DockerExecutor():
 
             shutil.copy(analysis.get_pdf_file(), output_path)
 
+        return analysis.run_get_results()
+
 
 executor = DockerExecutor()
