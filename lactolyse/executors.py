@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 __all__ = ('executor',)
 
 ANALYSES_PACKAGE = 'lactolyse.analyses'
-DOCKER_IMAGE = 'latex:latest'
+DOCKER_IMAGE = 'domenblenkus/lactolyse:latest'
 DOCKER_START_COMMAND = "/bin/sh -c 'sleep infinity'"
 DOCKER_MOUNT_POINT = '/mnt'
 
