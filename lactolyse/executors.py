@@ -148,6 +148,10 @@ class DockerExecutor():
             logger.warning("Container was not running, starting it.")
             self._container.start()
 
+    def get_docker_images(self):
+        """Return list of Docker images used by executor."""
+        return [DOCKER_IMAGE]
+
     def run(self, analysis, output_path, inputs=None):
         """Run the analysis."""
         if inputs is None:
