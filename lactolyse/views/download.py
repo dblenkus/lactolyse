@@ -1,5 +1,6 @@
 import os
 
+from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views import View
 
@@ -11,12 +12,13 @@ class DownloadFileView(View):
             return HttpResponseBadRequest()
 
         download = request.session.pop('download')
+        file_path = os.path.join(settings.MEDIA_ROOT, download['file_path'])
 
-        with open(download['file_path'], 'rb') as fn:
+        with open(file_path, 'rb') as fn:
             response = HttpResponse(fn.read())
 
         response['Content-Type'] = 'application/pdf'
-        response['Content-Length'] = os.path.getsize(download['file_path'])
+        response['Content-Length'] = os.path.getsize(file_path)
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(download['file_name'])
 
         return response
