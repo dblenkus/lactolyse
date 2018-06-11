@@ -67,17 +67,26 @@ class DockerExecutor():
         self._container = None
         self._analyses = {}
 
-        self._create_container()
+        self._create_container(ignore_errors=True)
         self._discover_analyses()
 
-    def _create_container(self):
+    def _create_container(self, ignore_errors=False):
         """Create the container."""
         runtime_mount = docker.types.Mount(DOCKER_MOUNT_POINT, self._runtime_root.name, 'bind')
 
         logger.debug("Creating container.")
-        self._container = docker_client.containers.run(
-            DOCKER_IMAGE, DOCKER_START_COMMAND, mounts=[runtime_mount], detach=True
-        )
+        try:
+            self._container = docker_client.containers.run(
+                DOCKER_IMAGE, DOCKER_START_COMMAND, mounts=[runtime_mount], detach=True
+            )
+        except docker.errors.ImageNotFound:
+            if ignore_errors:
+                logger.warning("Container image not found.")
+                return
+
+            logger.exception("Container image not found.")
+            raise
+
         logger.info("Container created: {}".format(self._container.id))
 
         # Remove the container on exit.
@@ -124,6 +133,9 @@ class DockerExecutor():
         already. If the container doesn't exist anymore, create a new
         one.
         """
+        if self._container is None:
+            self._create_container()
+
         try:
             self._container.reload()
         except docker.errors.NotFound:
