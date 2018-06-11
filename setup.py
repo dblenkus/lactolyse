@@ -33,6 +33,14 @@ setup(
 
     # exclude tests from built/installed package
     packages=find_packages(exclude=['tests', 'tests.*', '*.tests', '*.tests.*']),
+    package_data={
+        'lactolyse': [
+            'static/lactolyse/css/*.css',
+            'templates/*.html',
+            'templates/lactolyse/*.html',
+            'templates/lactolyse/latex/*.tex',
+        ],
+    },
     install_requires=[
         'channels~=2.0.2',
         'Django~=2.0.0',
