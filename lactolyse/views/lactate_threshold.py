@@ -2,6 +2,7 @@ import os
 import tempfile
 
 from django import forms
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files import File
 from django.db import transaction
@@ -26,45 +27,27 @@ class LactateThresholdView(LoginRequiredMixin, MultiFormView):
         'measurements': formset_factory(
             LactateMeasurementForm,
             min_num=5,
-            extra=4,
+            extra=10,
             validate_min=True,
         ),
     }
 
-    initial = {
-        'athlete': {
-            'name': "Domen Blenkuš",
-            'age': "28",
-            'weight': 79.5,
-        },
-        'measurements': [
-            {
-                'power': 80,
-                'heart_rate': 125,
-                'lactate': 2.4,
-            }, {
-                'power': 120,
-                'heart_rate': 135,
-                'lactate': 2.5,
-            }, {
-                'power': 160,
-                'heart_rate': 147,
-                'lactate': 1.6,
-            }, {
-                'power': 200,
-                'heart_rate': 160,
-                'lactate': 2.2,
-            }, {
-                'power': 240,
-                'heart_rate': 177,
-                'lactate': 4.1,
-            }, {
-                'power': 280,
-                'heart_rate': 195,
-                'lactate': 12.4,
-            }
-        ],
-    }
+    def get_initial(self):
+        """Return initial values if ``DEBUG`` setting is set to ``True``."""
+        if not settings.DEBUG:
+            return {}
+
+        return {
+            'athlete': {'name': "Domen Blenkuš", 'age': "28", 'weight': 79.5},
+            'measurements': [
+                {'power': 80, 'heart_rate': 125, 'lactate': 2.4},
+                {'power': 120, 'heart_rate': 135, 'lactate': 2.5},
+                {'power': 160, 'heart_rate': 147, 'lactate': 1.6},
+                {'power': 200, 'heart_rate': 160, 'lactate': 2.2},
+                {'power': 240, 'heart_rate': 177, 'lactate': 4.1},
+                {'power': 280, 'heart_rate': 195, 'lactate': 12.4},
+            ],
+        }
 
     def _save_data(self, forms):
         with transaction.atomic():
