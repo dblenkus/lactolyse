@@ -42,7 +42,7 @@ setup(
         ],
     },
     install_requires=[
-        'channels~=2.0.2',
+        'channels~=2.1.0',
         'Django~=2.0.0',
         'django-material~=1.2.2',
         'docker~=3.0.0',
