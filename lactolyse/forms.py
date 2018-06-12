@@ -11,6 +11,12 @@ class AthleteForm(forms.ModelForm):
         model = Athlete
         fields = ['name', 'age', 'weight']
 
+    def save(self, contributor, commit=True):
+
+        self.instance.contributor = contributor
+
+        return super().save(commit=commit)
+
 
 class LactateMeasurementForm(forms.ModelForm):
 

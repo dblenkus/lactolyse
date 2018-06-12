@@ -68,10 +68,11 @@ class LactateThresholdView(LoginRequiredMixin, MultiFormView):
 
     def _save_data(self, forms):
         with transaction.atomic():
-            athlete = forms['athlete'].save()
+            athlete = forms['athlete'].save(contributor=self.request.user)
 
             analyses = LactateThresholdAnalyses.objects.create(  # pylint: disable=no-member
-                athlete=athlete
+                contributor=self.request.user,
+                athlete=athlete,
             )
 
             measurements = []

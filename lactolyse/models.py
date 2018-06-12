@@ -1,6 +1,7 @@
 import hashlib
 import os
 
+from django.conf import settings
 from django.db import models
 
 
@@ -23,6 +24,10 @@ def generate_lactate_threshold_name(instance, filename):
 
 class Athlete(models.Model):
 
+    contributor = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL
+    )
+
     name = models.CharField(max_length=100)
 
     age = models.IntegerField()
@@ -34,6 +39,10 @@ class Athlete(models.Model):
 
 
 class LactateThresholdAnalyses(models.Model):
+
+    contributor = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL
+    )
 
     athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
 
