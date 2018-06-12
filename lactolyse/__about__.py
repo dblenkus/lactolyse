@@ -8,7 +8,7 @@ __url__ = 'https://github.com/dblenkus/lactolyse'
 
 # Semantic versioning is used. For more information see:
 # https://packaging.python.org/en/latest/distributing/#semantic-versioning-preferred
-__version__ = '0.9.0a4'
+__version__ = '0.9.0a5'
 
 __author__ = 'Domen Blenkuš'
 __email__ = 'domen@blenkus.com'
