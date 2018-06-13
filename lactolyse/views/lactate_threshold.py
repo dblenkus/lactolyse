@@ -1,5 +1,6 @@
 import os
 import tempfile
+from uuid import uuid4
 
 from django import forms
 from django.conf import settings
@@ -75,7 +76,8 @@ class LactateThresholdView(LoginRequiredMixin, MultiFormView):
         }
 
         report_dir = tempfile.TemporaryDirectory()
-        report_path = os.path.join(report_dir.name, 'report.pdf')
+        report_filename = '{}.pdf'.format(uuid4().hex)
+        report_path = os.path.join(report_dir.name, report_filename)
 
         results = executor.run(self.analyses_name, report_path, inputs)
 
