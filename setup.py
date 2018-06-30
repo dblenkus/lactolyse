@@ -12,6 +12,10 @@ from os import path
 
 base_dir = path.abspath(path.dirname(__file__))
 
+# Get the long description from the README file
+with open(path.join(base_dir, 'README.rst')) as f:
+    long_description = f.read()
+
 # Get package metadata from 'lactolyse.__about__.py' file
 about = {}
 with open(path.join(base_dir, 'lactolyse', '__about__.py')) as f:
@@ -23,6 +27,7 @@ setup(
     version=about['__version__'],
 
     description=about['__summary__'],
+    long_description=long_description,
 
     url=about['__url__'],
 
@@ -51,17 +56,20 @@ setup(
         'psycopg2-binary~=2.7.0',
 
     ],
-    python_requires='>=3.6, <3.7',
+    python_requires='>=3.6, <3.8',
     extras_require={
         'package': [
             'twine',
             'wheel',
         ],
         'test': [
+            'check-manifest',
+            'coverage>=4.2',
             'isort',
             'pycodestyle~=2.4.0',
             'pydocstyle~=2.1.1',
             'pylint~=1.9.1',
+            'readme_renderer',
         ],
     },
 

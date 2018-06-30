@@ -11,3 +11,11 @@ MANIFEST
 *.egg-info
 *.egg
 distribute*.tar.gz
+
+# Tox files
+.tox/
+
+# ignore Coverage.py files
+.coverage.*
+htmlcov/
+

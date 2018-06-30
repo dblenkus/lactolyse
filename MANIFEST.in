@@ -1,6 +1,12 @@
 # include meta data
 include LICENSE
+include README.rst
 # include tests and files needed by tests
+include tox.ini
+include .coveragerc
+include .pylintrc
+include tests/.env
+recursive-include tests *.py *.yml
 recursive-include lactolyse/tests *.py
 # include Dockerfiles and files needed to build Docker images
-recursive-include lactolyse/docker_images Dockerfile
+recursive-include lactolyse/docker_image Dockerfile
