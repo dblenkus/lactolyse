@@ -26,7 +26,7 @@ import docker
 
 from lactolyse.analyses.base import BaseAnalysis
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 __all__ = ('executor',)
 
@@ -35,12 +35,13 @@ DOCKER_IMAGE = 'domenblenkus/lactolyse:latest'
 DOCKER_START_COMMAND = "/bin/sh -c 'sleep infinity'"
 DOCKER_MOUNT_POINT = '/mnt'
 
-docker_client = docker.from_env()
+docker_client = docker.from_env()  # pylint: disable=invalid-name
 
 
 def remove_docker_container(container_id):
-
+    """Return the function which removes the Docker container with thhe given id when called."""
     def _remove_container():
+        """Remove the Docker container."""
         try:
             container = docker_client.containers.get(container_id)
         except docker.errors.NotFound:
@@ -62,7 +63,7 @@ class DockerExecutor():
 
     def __init__(self):
         self._runtime_root = tempfile.TemporaryDirectory()
-        logger.info("Runtime root: {}".format(self._runtime_root.name))
+        logger.info("Runtime root: %s", self._runtime_root.name)
 
         self._container = None
         self._analyses = {}
@@ -87,12 +88,13 @@ class DockerExecutor():
             logger.exception("Container image not found.")
             raise
 
-        logger.info("Container created: {}".format(self._container.id))
+        logger.info("Container created: %s", self._container.id)
 
         # Remove the container on exit.
         atexit.register(remove_docker_container(self._container.id))
 
     def _validate_analysis(self, analysis):
+        """Validate that given analysis has required parameters."""
         cls_name = analysis.__name__
 
         assert analysis.name, (
@@ -114,17 +116,15 @@ class DockerExecutor():
             for attr_name in dir(module):
                 attr = getattr(module, attr_name)
 
-                if (not inspect.isclass(attr) or
-                    not issubclass(attr, BaseAnalysis) or
-                    attr is BaseAnalysis):
-                        continue
+                if (not inspect.isclass(attr)
+                        or not issubclass(attr, BaseAnalysis)
+                        or attr is BaseAnalysis):
+                    continue
 
                 self._validate_analysis(attr)
                 self._analyses[attr.name] = attr
 
-        logger.info(
-            "Found {} analyses: {}".format(len(self._analyses), list(self._analyses.keys()))
-        )
+        logger.info("Found %d analyses: %s", len(self._analyses), list(self._analyses.keys()))
 
     def _check_container(self):
         """Check that container is up and running.
@@ -201,4 +201,4 @@ class DockerExecutor():
         return analysis.run_get_results()
 
 
-executor = DockerExecutor()
+executor = DockerExecutor()  # pylint: disable=invalid-name

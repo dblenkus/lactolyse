@@ -1,3 +1,5 @@
+"""Lactolyse models."""
+
 import hashlib
 import os
 
@@ -17,12 +19,13 @@ def _generate_report_name(instance, filename, prefix):
 
 
 def generate_lactate_threshold_name(instance, filename):
-
+    """Generate an unique filename for report based on it's hash."""
     prefix = os.path.join('reports', 'lactate_threshold')
     return _generate_report_name(instance, filename, prefix)
 
 
 class Athlete(models.Model):
+    """Athlete model."""
 
     contributor = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL
@@ -35,10 +38,12 @@ class Athlete(models.Model):
     weight = models.DecimalField(max_digits=5, decimal_places=2)
 
     def __str__(self):
+        """Format model name."""
         return "name: {}, age: {}".format(self.name, self.age)
 
 
 class LactateThresholdAnalyses(models.Model):
+    """Lactate Threshold Analyses model."""
 
     contributor = models.ForeignKey(
         settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL
@@ -59,10 +64,12 @@ class LactateThresholdAnalyses(models.Model):
     result_at4 = models.IntegerField(null=True)
 
     def __str__(self):
+        """Format model name."""
         return "athlete: {}, date: {}".format(self.athlete.name, self.created)
 
 
 class LactateMeasurement(models.Model):
+    """Lactate Measurement model."""
 
     analyses = models.ForeignKey(LactateThresholdAnalyses, on_delete=models.CASCADE)
 
@@ -73,6 +80,7 @@ class LactateMeasurement(models.Model):
     lactate = models.DecimalField(max_digits=4, decimal_places=2)
 
     def __str__(self):
+        """Format model name."""
         return "name: {}, power: {}, heart rate: {}, lactate: {}".format(
-            self.analyses.athlete.name, self.power, self.heart_rate, self.lactate
+            self.analyses.athlete.name, self.power, self.heart_rate, self.lactate  # pylint: disable=no-member
         )

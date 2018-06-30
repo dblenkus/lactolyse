@@ -1,22 +1,21 @@
+"""Lactate threshold analysis."""
 import logging
 
 import numpy as np
 
 from .base import BaseAnalysis
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 class LactateThresholdAnalyses(BaseAnalysis):
+    """Lactate threshold analysis."""
 
     name = 'lactate_threshold'
     template = 'lactate_treshold.tex'
 
     def _calculate_dmax_context(self, inputs, lac_poly, hr_poly):
-
-        def perpendicular(vector):
-            return np.array(-vector[1], vector[0])
-
+        """Calculate context for d-max method."""
         # Determine where polynomial is the "most horizontal", i.e. root
         # of second derivative.
 
@@ -50,14 +49,6 @@ class LactateThresholdAnalyses(BaseAnalysis):
         ftp = filter(lambda val: start_point[0] < val < inputs['power'][-1], ftp)
         ftp = list(ftp)[0]
 
-        line_poly = np.poly1d(np.polyfit(
-            [start_point[0], inputs['power'][-1]],
-            [start_point[1], inputs['lactate'][-1]],
-            1
-        ))
-
-        perp_poly = perpendicular(line_poly)
-
         return {
             'power': ftp,
             'start_point': start_point,
@@ -68,10 +59,11 @@ class LactateThresholdAnalyses(BaseAnalysis):
         }
 
     def _calculate_cross_context(self, inputs, lac_poly, hr_poly):
+        """Calculate context for cross method."""
         start_line = np.poly1d(
             np.polyfit(
                 [inputs['power'][0], inputs['power'][0] + 5],
-                [lac_poly(inputs['power'][0] ), lac_poly(inputs['power'][0] + 5)],
+                [lac_poly(inputs['power'][0]), lac_poly(inputs['power'][0] + 5)],
                 1
             )
         )
@@ -96,6 +88,7 @@ class LactateThresholdAnalyses(BaseAnalysis):
         }
 
     def _calculate_ftp_context(self, dmax, cross):
+        """Calculate the average."""
         return {
             'power': (dmax['power'] + cross['power']) / 2,
             'heart_rate': (dmax['heart_rate'] + cross['heart_rate']) / 2,
@@ -103,6 +96,7 @@ class LactateThresholdAnalyses(BaseAnalysis):
         }
 
     def _calculate_at_context(self, inputs, threshold, lac_poly, hr_poly):
+        """Calculate context for at method."""
         roots = np.roots(lac_poly - threshold)
         roots = roots[np.isreal(roots)]
         roots = filter(lambda val: inputs['power'][0] < val < inputs['power'][-1], roots)
@@ -116,6 +110,7 @@ class LactateThresholdAnalyses(BaseAnalysis):
         }
 
     def render_context(self, inputs):
+        """Render the context."""
         for attr in ['power', 'heart_rate', 'lactate']:
             if attr not in inputs:
                 raise ValueError("Missing input '{}'.".format(attr))

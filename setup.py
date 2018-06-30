@@ -57,6 +57,12 @@ setup(
             'twine',
             'wheel',
         ],
+        'test': [
+            'isort',
+            'pycodestyle~=2.4.0',
+            'pydocstyle~=2.1.1',
+            'pylint~=1.9.1',
+        ],
     },
 
     classifiers=[

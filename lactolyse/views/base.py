@@ -1,9 +1,10 @@
-from django import forms
+"""Lactolyse base forms."""
 from django.http import HttpResponseRedirect
 from django.views.generic import FormView
 
 
 class MultiFormView(FormView):
+    """Multiform view."""
 
     form_classes = {}
 
@@ -24,7 +25,7 @@ class MultiFormView(FormView):
         initial = self.get_initial()
 
         kwargs = {}
-        for key in self.form_classes.keys():
+        for key in self.form_classes:
             kwargs[key] = {
                 'initial': initial.get(key),
                 'prefix': self.get_prefix(),

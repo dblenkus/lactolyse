@@ -1,3 +1,4 @@
+"""Lactolyse download views."""
 import os
 
 from django.conf import settings
@@ -6,8 +7,10 @@ from django.views import View
 
 
 class DownloadFileView(View):
+    """Download view."""
 
     def get(self, request):
+        """Serve the file specified in Django's session."""
         if 'download' not in request.session:
             return HttpResponseBadRequest()
 

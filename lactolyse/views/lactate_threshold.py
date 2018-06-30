@@ -1,14 +1,13 @@
+"""Views for Lactate Threshold Analysis."""
 import os
 import tempfile
 from uuid import uuid4
 
-from django import forms
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.files import File
 from django.db import transaction
 from django.forms import formset_factory
-from django.http import HttpResponse
 from django.urls import reverse_lazy
 
 from lactolyse.executors import executor
@@ -19,6 +18,8 @@ from .base import MultiFormView
 
 
 class LactateThresholdView(LoginRequiredMixin, MultiFormView):
+    """Lactate Threshold Analisys view."""
+
     template_name = os.path.join('lactolyse', 'lactate_threshold.html')
     analyses_name = 'lactate_threshold'
     success_url = reverse_lazy('analyses_success')
@@ -51,6 +52,7 @@ class LactateThresholdView(LoginRequiredMixin, MultiFormView):
         }
 
     def _save_data(self, forms):
+        """Save data."""
         with transaction.atomic():
             athlete = forms['athlete'].save(contributor=self.request.user)
 
@@ -68,6 +70,7 @@ class LactateThresholdView(LoginRequiredMixin, MultiFormView):
         return analyses, athlete, measurements
 
     def _make_report(self, analysis, athlete, measurements):
+        """Gather data, run executor and save the report."""
         inputs = {
             'power': [int(m.power) for m in measurements],
             'heart_rate': [int(m.heart_rate) for m in measurements],
@@ -93,7 +96,7 @@ class LactateThresholdView(LoginRequiredMixin, MultiFormView):
             analysis.save()
 
     def forms_valid(self, forms):
-
+        """Save data, make report and reference it is Django's session for later views."""
         analysis, athlete, measurements = self._save_data(forms)
         self._make_report(analysis, athlete, measurements)
 

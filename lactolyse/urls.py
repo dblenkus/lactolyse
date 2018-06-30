@@ -1,11 +1,10 @@
-from django.contrib import admin
-from django.contrib.auth import views as auth_views
+"""Lactolyse URL configuration."""
 from django.urls import path
 from django.views.generic import RedirectView
 
 from . import views
 
-urlpatterns = [
+urlpatterns = [  # pylint: disable=invalid-name
     path('', RedirectView.as_view(pattern_name='select_analyses'), name="index"),
     path('tests/', views.select_analyses_view, name='select_analyses'),
     path('tests/lactate/', views.lactate_threshold_view, name='lactate_analyses'),

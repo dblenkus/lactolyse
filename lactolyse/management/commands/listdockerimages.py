@@ -1,4 +1,5 @@
 """.. Ignore pydocstyle D400.
+
 ==================
 List Docker images
 ==================
@@ -15,6 +16,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Handle command listdockerimages."""
-
         images = executor.get_docker_images()
         self.stdout.write('\n'.join(images))

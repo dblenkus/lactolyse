@@ -1,18 +1,19 @@
+"""Lactolyse base analysis."""
 import os
 
 import jinja2
 
 TEX_JOB_NAME = 'report'
 
-latex_jinja_env = jinja2.Environment(
-    block_start_string='\BLOCK{',
-    block_end_string='}',
-    variable_start_string='\VAR{',
-    variable_end_string='}',
-    comment_start_string='\#{',
-    comment_end_string='}',
-    line_statement_prefix='%%',
-    line_comment_prefix='%#',
+latex_jinja_env = jinja2.Environment(  # pylint: disable=invalid-name
+    block_start_string=r'\BLOCK{',
+    block_end_string=r'}',
+    variable_start_string=r'\VAR{',
+    variable_end_string=r'}',
+    comment_start_string=r'\#{',
+    comment_end_string=r'}',
+    line_statement_prefix=r'%%',
+    line_comment_prefix=r'%#',
     trim_blocks=True,
     autoescape=False,
     loader=jinja2.PackageLoader('lactolyse', os.path.join('templates', 'lactolyse', 'latex'))
@@ -20,8 +21,10 @@ latex_jinja_env = jinja2.Environment(
 
 
 class BaseAnalysis:
+    """Base class for performing analyses."""
 
     def __init__(self, runtime_dir):
+        """Initialize analysis and set variables based on given runtime dir."""
         self._runtime_dir = runtime_dir
 
         self._tex_file = os.path.join(self._runtime_dir, TEX_JOB_NAME + '.tex')
@@ -66,9 +69,11 @@ class BaseAnalysis:
 
     @property
     def run_command(self):
+        """Command for preparing report."""
         return 'xelatex -interaction=nonstopmode -jobname={0} {0}.tex'.format(TEX_JOB_NAME)
 
     def render_template(self):
+        """Redner template and save it to a file."""
         template = latex_jinja_env.get_template(self.template)
         self._rendered_template = template.render(**self._context)
 
@@ -90,4 +95,3 @@ class BaseAnalysis:
         accessing ``self._context`` argument.
         """
         return self.get_results(self._context)
-
