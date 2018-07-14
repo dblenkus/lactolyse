@@ -5,3 +5,7 @@ postgresql:
         POSTGRES_DB: lactolyse
     ports:
         - "45432:5432"
+redis:
+    image: redis:3.2
+    ports:
+        - "46379:6379"

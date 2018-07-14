@@ -9,5 +9,9 @@ urlpatterns = [  # pylint: disable=invalid-name
     path('tests/', views.select_analyses_view, name='select_analyses'),
     path('tests/lactate/', views.lactate_threshold_view, name='lactate_analyses'),
     path('tests/success/', views.analyses_success_view, name='analyses_success'),
-    path('download/', views.download_file_view, name='download_file'),
+    path(
+        'download/lactate_threshold/<int:pk>/',
+        views.lactate_threshold_download_view,
+        name='download_lactate_threshold'
+    ),
 ]

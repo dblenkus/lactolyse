@@ -47,7 +47,9 @@ setup(
         ],
     },
     install_requires=[
+        'asgiref~=2.1',
         'channels~=2.1.0',
+        'channels_redis~=2.1.0',
         'Django~=2.0.0',
         'django-material~=1.2.2',
         'docker~=3.0.0',

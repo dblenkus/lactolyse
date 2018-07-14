@@ -18,6 +18,7 @@ import inspect
 import logging
 import os
 import shutil
+import sys
 import tempfile
 import time
 from importlib import import_module
@@ -201,4 +202,7 @@ class DockerExecutor():
         return analysis.run_get_results()
 
 
-executor = DockerExecutor()  # pylint: disable=invalid-name
+executor = None  # pylint: disable=invalid-name
+# Initialize executor only in workers.
+if sys.argv[1] == 'runworker':
+    executor = DockerExecutor()  # pylint: disable=invalid-name

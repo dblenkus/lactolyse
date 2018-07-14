@@ -1,5 +1,22 @@
-from channels.routing import ProtocolTypeRouter
+from django.conf.urls import url
 
-application = ProtocolTypeRouter({
+from channels.routing import ChannelNameRouter, ProtocolTypeRouter, URLRouter
+from channels.sessions import SessionMiddlewareStack
 
+from lactolyse.consumers import ClientConsumer, RunAnalysisConsumer
+from lactolyse.protocol import RUN_ANALYSIS_CHANNEL
+
+
+application = ProtocolTypeRouter({  # pylint: disable=invalid-name
+    # Client-facing consumers.
+    'websocket': SessionMiddlewareStack(
+        URLRouter([
+            url(r'^ws/$', ClientConsumer),
+        ]),
+    ),
+
+    # Background worker consumers.
+    'channel': ChannelNameRouter({
+        RUN_ANALYSIS_CHANNEL: RunAnalysisConsumer,
+    })
 })

@@ -1,18 +1,19 @@
 """Views for Lactate Threshold Analysis."""
 import os
-import tempfile
-from uuid import uuid4
+
+from asgiref.sync import async_to_sync
 
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.files import File
 from django.db import transaction
 from django.forms import formset_factory
 from django.urls import reverse_lazy
 
-from lactolyse.executors import executor
+from channels.layers import get_channel_layer
+
 from lactolyse.forms import AthleteForm, LactateMeasurementForm
 from lactolyse.models import LactateThresholdAnalyses
+from lactolyse.protocol import GROUP_SESSIONS, MAKE_REPORT_TYPE, RUN_ANALYSIS_CHANNEL
 
 from .base import MultiFormView
 
@@ -67,44 +68,22 @@ class LactateThresholdView(LoginRequiredMixin, MultiFormView):
                     measurement = form.save(analyses=analyses)
                     measurements.append(measurement)
 
-        return analyses, athlete, measurements
-
-    def _make_report(self, analysis, athlete, measurements):
-        """Gather data, run executor and save the report."""
-        inputs = {
-            'power': [int(m.power) for m in measurements],
-            'heart_rate': [int(m.heart_rate) for m in measurements],
-            'lactate': [float(m.lactate) for m in measurements],
-            'weight': float(athlete.weight),
-        }
-
-        report_dir = tempfile.TemporaryDirectory()
-        report_filename = '{}.pdf'.format(uuid4().hex)
-        report_path = os.path.join(report_dir.name, report_filename)
-
-        results = executor.run(self.analyses_name, report_path, inputs)
-
-        analysis.result_dmax = results['dmax']
-        analysis.result_cross = results['cross']
-        analysis.result_at2 = results['at2']
-        analysis.result_at4 = results['at4']
-
-        with open(report_path, 'rb') as fn:
-            report_file = File(fn)
-            analysis.report = report_file
-
-            analysis.save()
+        return analyses
 
     def forms_valid(self, forms):
         """Save data, make report and reference it is Django's session for later views."""
-        analysis, athlete, measurements = self._save_data(forms)
-        self._make_report(analysis, athlete, measurements)
+        channel_layer = get_channel_layer()
 
-        # Set download file for download view.
-        self.request.session['download'] = {
-            'file_path': analysis.report.name,
-            # 'file_name': "Report - {}.pdf".format(athlete.name),
-            'file_name': "Report.pdf",
-        }
+        analysis = self._save_data(forms)
+
+        session_id = self.request.session.session_key
+        async_to_sync(channel_layer.send)(
+            RUN_ANALYSIS_CHANNEL,
+            {
+                'type': MAKE_REPORT_TYPE,
+                'analysis_pk': analysis.pk,
+                'notify_channel': GROUP_SESSIONS.format(websocket_id=session_id),
+            }
+        )
 
         return super().forms_valid(forms)

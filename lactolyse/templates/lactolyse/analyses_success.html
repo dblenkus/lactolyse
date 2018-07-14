@@ -8,7 +8,16 @@
 {% endblock meta_tags %}
 
 {% block content %}
-
   <h1 class="center-align">{% trans "Thank you!" %}</h1>
-
 {% endblock content %}
+
+{% block javascript %}
+  <script>
+    var chatSocket = new WebSocket('ws://' + window.location.host + '/ws/');
+
+    chatSocket.onmessage = function(e) {
+        var data = JSON.parse(e.data);
+        location.href = data['download_url'];
+    };
+  </script>
+{% endblock javascript %}
