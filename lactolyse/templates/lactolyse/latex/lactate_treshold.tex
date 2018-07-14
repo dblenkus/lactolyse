@@ -91,10 +91,9 @@
     \begin{tabular}{r|r||c|c|c|c}
                                                          &                     & Power [W]                     & Heart Rate [bpm]                   & \makecell{Power to Weight \\ Ratio [W/kg]}                & \makecell{Blood Lactate \\ {[}mMol]}       \\
       \hline \hline
-      \multirow{4}{*}{\makecell{Anaerobic \\ threshold}} & Modified D-max      & \VAR{ dmax['power'] | int }   & \VAR{ dmax['heart_rate'] | int }   & \VAR{ '%.2f' | format(dmax['power']/inputs['weight']) }   & \VAR{ '%.1f' | format(dmax['lactate']) }   \\
+      \multirow{3}{*}{\makecell{Anaerobic \\ threshold}} & Modified D-max      & \VAR{ dmax['power'] | int }   & \VAR{ dmax['heart_rate'] | int }   & \VAR{ '%.2f' | format(dmax['power']/inputs['weight']) }   & \VAR{ '%.1f' | format(dmax['lactate']) }   \\
                                                          & Cross method        & \VAR{ cross['power'] | int }  & \VAR{ cross['heart_rate'] | int }  & \VAR{ '%.2f' | format(cross['power']/inputs['weight']) }  & \VAR{ '%.1f' | format(cross['lactate']) }  \\
                                                          & AT4 4 mMol          & \VAR{ at4['power'] | int }    & \VAR{ at4['heart_rate'] | int }    & \VAR{ '%.2f' | format(at4['power']/inputs['weight']) }    & \VAR{ '%.1f' | format(at4['lactate']) }    \\
-                                                         & FTP (miss)          & \VAR{ ftp['power'] | int }    & \VAR{ ftp['heart_rate'] | int }    & \VAR{ '%.2f' | format(ftp['power']/inputs['weight']) }    & \VAR{ '%.1f' | format(ftp['lactate']) }    \\
       \hline
       \multirow{2}{*}{\makecell{Aerobic \\ threshold}}   & Baseline + 0.5 mMol & \VAR{ dmax['start_point'][0] | int }   & \VAR{ dmax['start_hr'] | int }   & \VAR{ '%.2f' | format(dmax['start_point'][0]/inputs['weight']) }   & \VAR{ '%.1f' | format(dmax['start_point'][1]) } \\
                                                          & AT2 2 mMol          & \VAR{ at2['power'] | int }    & \VAR{ at2['heart_rate'] | int }    & \VAR{ '%.2f' | format(at2['power']/inputs['weight']) }    & \VAR{ '%.1f' | format(at2['lactate']) }
