@@ -2,6 +2,11 @@ sudo: required
 
 language: python
 
+branches:
+  only:
+    - master
+    - ^\d+\.\d+\.\d+
+
 # Global Travis CI step definitions that will be used by all jobs unless
 # explicitly overriden in the jobs.include matrix.
 python:
