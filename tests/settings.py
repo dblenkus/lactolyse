@@ -75,8 +75,6 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'tests.wsgi.application'
-
 ASGI_APPLICATION = "tests.routing.application"
 
 
