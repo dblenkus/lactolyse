@@ -1,0 +1,82 @@
+sudo: required
+
+language: python
+
+# Global Travis CI step definitions that will be used by all jobs unless
+# explicitly overriden in the jobs.include matrix.
+python:
+  - "3.6"
+
+services:
+  - docker
+  - redis-server
+
+addons:
+  # NOTE: We need to use the postgresql addon since the default PostgreSQL
+  # service provided on Trusty machines is PostgreSQL 9.2.
+  postgresql: "9.4"
+
+install: pip install tox
+
+script: tox -e $TOX_ENV
+
+after_success:
+  - pip install codecov
+  - codecov -e TOX_ENV
+
+# Build stages.
+jobs:
+  include:
+    - stage: test
+      env:
+        - TOX_ENV=py36
+        # Set environment variables with information how to use the required
+        # services.
+        - LACTOLYSE_POSTGRESQL_USER=postgres
+        - LACTOLYSE_POSTGRESQL_PORT=5432
+        - LACTOLYSE_REDIS_PORT=6379
+
+    # NOTE: We undo almost all global Travis CI step definitions to ensure the
+    # following Tox environments are run without access to any service.
+    - stage: test
+      env: TOX_ENV=linters
+      services: []
+      addons: {}
+      before_install: skip
+      after_success: skip
+    - stage: test
+      env: TOX_ENV=packaging
+      services: []
+      addons: {}
+      before_install: skip
+      after_success: skip
+
+    # NOTE: We undo all the global Travis CI step definitions to ensure
+    # building of source and wheel distributions is performed in a clean
+    # environment.
+    - stage: release
+      services: []
+      addons: {}
+      before_install: skip
+      install: skip
+      script: skip
+      # NOTE: Due to the way Travis CI currently works, setting
+      # 'after_success: skip' would also result in skipping the deploy step.
+      # A work-around is to execute a dummy echo command.
+      # More info at: https://github.com/travis-ci/travis-ci/issues/8337.
+      after_success: echo "Skipping..."
+      deploy:
+        provider: pypi
+        user: dblenkus-bot
+        password:
+          secure: "kG2qkgqkPRj7XbwVZF6oeKvSXGj9Rjj/IP+u4gjYEAC+86pEs5UzOzd7mHp2iLJSJR3PFENq9sLeOh5eo2XcWRtd+VmxrDpU5pTgb+ZiAnWh5gom372rt82TwAUifwaVg9Swfb7hPL7LxGRv/tjALHNChWAl2CTj0XdUEkbKV75Ki1/dTkBQafnEsuJmgVxV8qRkKmpCkZqU9Ndk1SCuyc38IgjcR4nrtTxtrCJfCfq2ZZwx9bCX9liGcTLniFQEMv9q9vt+xMEzcV24EZphtYfODaic3Z09h/E7hW6mRhl2zeRhhatuMpcsmO4AVZX8muFyvOwQTL46JX9/9rF7IaFDu/dXC9q/DR8Qh33rbac4S65/lr1g1fbLO43MSdAJDpX6qwrhmO8sNm2wSEwdJDGfzLjWl5XuxHP7UW/UXV2ZQ3bPJ44wdjEfIRHClDSdbmJZWwitReKOgjl2FdR8qXKSVmrD5280meCMTQALv8zUXEDccYtLzEFADg39extc/b1UCGzSsqjnbxu4VUznD1Zn3rlf0ulWR9uHEYMmV6ubLTSeJZgvA5gQWmBE/DUfJeWHb4alMD8JoLipgjbyW0Gqiq3p0KOkA2ov3C9G8+hzZA53ZOSW3hyGmmOn1oNfVjseE0KZadxD6vnqQDTgGIO2EFju3JwE4cuxprtj0cs="
+        distributions: sdist bdist_wheel
+        on:
+          # Enable deploying tags. By default, Travis CI only deploys from the
+          # master branch.
+          tags: true
+      # Only build releases for tags starting with a Semantic Versioning 2.0
+      # compatible version.
+      if: tag =~ ^\d+\.\d+\.\d+
+
+

@@ -86,10 +86,10 @@ ASGI_APPLICATION = "tests.routing.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'lactolyse',
-        'USER': 'lactolyse',
-        'HOST': 'localhost',
-        'PORT': '45432',
+        'NAME': os.environ.get('LACTOLYSE_POSTGRESQL_NAME', 'lactolyse'),
+        'USER': os.environ.get('LACTOLYSE_POSTGRESQL_USER', 'lactolyse'),
+        'HOST': os.environ.get('LACTOLYSE_POSTGRESQL_HOST', 'localhost'),
+        'PORT': int(os.environ.get('LACTOLYSE_POSTGRESQL_PORT', 45432)),
     }
 }
 
