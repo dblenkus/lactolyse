@@ -110,14 +110,6 @@ class LactateThresholdAnalyses(BaseAnalysis):
             'lactate': lac_poly.poly(power),
         }
 
-    def _calculate_ftp_context(self, dmax, cross):
-        """Calculate the average."""
-        return {
-            'power': (dmax['power'] + cross['power']) / 2,
-            'heart_rate': (dmax['heart_rate'] + cross['heart_rate']) / 2,
-            'lactate': (dmax['lactate'] + cross['lactate']) / 2,
-        }
-
     def _calculate_at_context(self, inputs, threshold, lac_poly, hr_poly):
         """Calculate context for at method."""
         roots = np.roots(lac_poly.poly - threshold)
@@ -141,15 +133,11 @@ class LactateThresholdAnalyses(BaseAnalysis):
         lac_poly = FittedPolynomial(inputs['power'], inputs['lactate'])
         hr_poly = FittedPolynomial(inputs['power'], inputs['heart_rate'])
 
-        dmax_context = self._calculate_dmax_context(inputs, lac_poly, hr_poly)
-        cross_context = self._calculate_cross_context(inputs, lac_poly, hr_poly)
-
         return {
             'inputs': inputs,
             'lac_poly': lac_poly,
-            'dmax': dmax_context,
-            'cross': cross_context,
-            'ftp': self._calculate_ftp_context(dmax_context, cross_context),
+            'dmax': self._calculate_dmax_context(inputs, lac_poly, hr_poly),
+            'cross': self._calculate_cross_context(inputs, lac_poly, hr_poly),
             'at2': self._calculate_at_context(inputs, 2, lac_poly, hr_poly),
             'at4': self._calculate_at_context(inputs, 4, lac_poly, hr_poly),
         }
