@@ -47,12 +47,12 @@ setup(
         ],
     },
     install_requires=[
+        'aiodocker~=0.13.0',
         'asgiref~=2.1',
         'channels~=2.1.0',
         'channels_redis~=2.1.0',
         'Django~=2.0.0',
         'django-material~=1.2.2',
-        'docker~=3.0.0',
         'Jinja2~=2.10',
         'numpy~=1.14.0',
         'psycopg2-binary~=2.7.0',

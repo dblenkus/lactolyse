@@ -14,15 +14,19 @@ At the moment only Docker executor is implemented:
 
 """
 import atexit
+import asyncio
 import inspect
 import logging
 import os
+import shlex
 import shutil
 import sys
 import tempfile
 import time
+import uuid
 from importlib import import_module
 
+import aiodocker
 import docker
 
 from lactolyse.analyses.base import BaseAnalysis
@@ -36,24 +40,34 @@ DOCKER_IMAGE = 'domenblenkus/lactolyse:latest'
 DOCKER_START_COMMAND = "/bin/sh -c 'sleep infinity'"
 DOCKER_MOUNT_POINT = '/mnt'
 
-docker_client = docker.from_env()  # pylint: disable=invalid-name
+docker_client = aiodocker.Docker()  # pylint: disable=invalid-name
 
 
-def remove_docker_container(container_id):
+def remove_docker_container(container):
     """Return the function which removes the Docker container with thhe given id when called."""
-    def _remove_container():
+    async def _remove_container():
         """Remove the Docker container."""
         try:
-            container = docker_client.containers.get(container_id)
-        except docker.errors.NotFound:
+            await container.kill()
+            await container.delete()
+        except aiodocker.exceptions.DockerError:
             # Looks like container has already been removed.
             return
 
-        # container.stop()
-        container.remove(force=True)
+    def _run_remove():
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(_remove_container())
 
-    return _remove_container
+    return _run_remove
 
+
+def create_executor():
+    executor_ = DockerExecutor()
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(executor_._create_container())  # pylint: disable=protected-access
+
+    return executor_
 
 class DockerExecutor():
     """Executor using Docker container for the environment.
@@ -66,33 +80,41 @@ class DockerExecutor():
         self._runtime_root = tempfile.TemporaryDirectory()
         logger.info("Runtime root: %s", self._runtime_root.name)
 
+        self._container_name = 'lactolyse-{}'.format(uuid.uuid4())
         self._container = None
         self._analyses = {}
 
-        self._create_container(ignore_errors=True)
         self._discover_analyses()
 
-    def _create_container(self, ignore_errors=False):
+    async def _create_container(self):
         """Create the container."""
         runtime_mount = docker.types.Mount(DOCKER_MOUNT_POINT, self._runtime_root.name, 'bind')
 
+        config = {
+            "Cmd": shlex.split(DOCKER_START_COMMAND),
+            "Image": DOCKER_IMAGE,
+            "AttachStdin": False,
+            "AttachStdout": False,
+            "AttachStderr": False,
+            "Tty": False,
+            "OpenStdin": False,
+        }
+
         logger.debug("Creating container.")
         try:
-            self._container = docker_client.containers.run(
-                DOCKER_IMAGE, DOCKER_START_COMMAND, mounts=[runtime_mount], detach=True
+            self._container = await docker_client.containers.create_or_replace(
+                config=config,
+                name=self._container_name,
             )
-        except docker.errors.ImageNotFound:
-            if ignore_errors:
-                logger.warning("Container image not found.")
-                return
-
-            logger.exception("Container image not found.")
+            await self._container.start()
+        except aiodocker.exceptions.DockerError:
+            logger.exception("Error wile creating Docker container.")
             raise
 
-        logger.info("Container created: %s", self._container.id)
+        logger.info("Container created: %s", self._container._id)  #pylint: disable=protected-access
 
         # Remove the container on exit.
-        atexit.register(remove_docker_container(self._container.id))
+        atexit.register(remove_docker_container(self._container))
 
     def _validate_analysis(self, analysis):
         """Validate that given analysis has required parameters."""
@@ -134,9 +156,6 @@ class DockerExecutor():
         already. If the container doesn't exist anymore, create a new
         one.
         """
-        if self._container is None:
-            self._create_container()
-
         try:
             self._container.reload()
         except docker.errors.NotFound:
@@ -205,4 +224,4 @@ class DockerExecutor():
 executor = None  # pylint: disable=invalid-name
 # Initialize executor only in workers.
 if sys.argv[1] == 'runworker':
-    executor = DockerExecutor()  # pylint: disable=invalid-name
+    executor = create_executor()  # pylint: disable=invalid-name
