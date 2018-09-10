@@ -26,7 +26,11 @@ class RunAnalysisConsumer(SyncConsumer):
         ).prefetch_related(
             'lactatemeasurement_set'
         ).get(pk=event['analysis_pk'])
-        measurements = analysis.lactatemeasurement_set.values('power', 'heart_rate', 'lactate')
+        measurements = analysis.lactatemeasurement_set.order_by(
+            'power'
+        ).values(
+            'power', 'heart_rate', 'lactate'
+        )
 
         inputs = {
             'power': [m['power'] for m in measurements],

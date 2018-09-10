@@ -9,8 +9,8 @@ class FittedPolynomial:
         """Initialize fitted polynomial."""
         self.poly = np.poly1d(np.polyfit(x_values, y_values, 3))
 
-        self.min_x = x_values[0]
-        self.max_x = x_values[-1]
+        self.min_x = min(x_values)
+        self.max_x = max(x_values)
 
         self._deriv = None
         self._deriv_roots = None
