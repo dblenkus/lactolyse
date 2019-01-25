@@ -82,5 +82,5 @@ class LactateMeasurement(models.Model):
     def __str__(self):
         """Format model name."""
         return "name: {}, power: {}, heart rate: {}, lactate: {}".format(
-            self.analyses.athlete.name, self.power, self.heart_rate, self.lactate  # pylint: disable=no-member
+            self.analyses.athlete.name, self.power, self.heart_rate, self.lactate
         )

@@ -7,7 +7,7 @@ from lactolyse.consumers import ClientConsumer, RunAnalysisConsumer
 from lactolyse.protocol import RUN_ANALYSIS_CHANNEL
 
 
-application = ProtocolTypeRouter({  # pylint: disable=invalid-name
+application = ProtocolTypeRouter({
     # Client-facing consumers.
     'websocket': SessionMiddlewareStack(
         URLRouter([

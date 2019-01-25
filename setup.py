@@ -52,10 +52,6 @@ setuptools.setup(
         'test': [
             'check-manifest',
             'coverage>=4.2',
-            'isort',
-            'pycodestyle~=2.4.0',
-            'pydocstyle~=2.1.1',
-            'pylint~=1.9.1',
             'readme_renderer',
             'setuptools_scm',
             'twine',

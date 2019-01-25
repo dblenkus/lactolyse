@@ -21,7 +21,7 @@ class RunAnalysisConsumer(SyncConsumer):
 
     def lactolyse_makereport(self, event):
         """Make report for Lactate Thresold Analysis."""
-        analysis = LactateThresholdAnalyses.objects.select_related(  # pylint: disable=no-member
+        analysis = LactateThresholdAnalyses.objects.select_related(
             'athlete'
         ).prefetch_related(
             'lactatemeasurement_set'

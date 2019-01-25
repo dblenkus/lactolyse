@@ -27,7 +27,7 @@ import docker
 
 from lactolyse.analyses.base import BaseAnalysis
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 __all__ = ('executor',)
 
@@ -36,7 +36,7 @@ DOCKER_IMAGE = 'domenblenkus/lactolyse:latest'
 DOCKER_START_COMMAND = "/bin/sh -c 'sleep infinity'"
 DOCKER_MOUNT_POINT = '/mnt'
 
-docker_client = docker.from_env()  # pylint: disable=invalid-name
+docker_client = docker.from_env()
 
 
 def remove_docker_container(container_id):
@@ -202,7 +202,7 @@ class DockerExecutor():
         return analysis.run_get_results()
 
 
-executor = None  # pylint: disable=invalid-name
+executor = None
 # Initialize executor only in workers.
 if sys.argv[1] == 'runworker':
-    executor = DockerExecutor()  # pylint: disable=invalid-name
+    executor = DockerExecutor()

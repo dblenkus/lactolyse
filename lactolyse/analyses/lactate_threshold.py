@@ -6,7 +6,7 @@ import numpy as np
 from .base import BaseAnalysis
 from .utils import FittedPolynomial
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+logger = logging.getLogger(__name__)
 
 
 class LactateThresholdAnalyses(BaseAnalysis):

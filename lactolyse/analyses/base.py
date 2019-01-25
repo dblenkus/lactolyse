@@ -5,7 +5,7 @@ import jinja2
 
 TEX_JOB_NAME = 'report'
 
-latex_jinja_env = jinja2.Environment(  # pylint: disable=invalid-name
+latex_jinja_env = jinja2.Environment(
     block_start_string=r'\BLOCK{',
     block_end_string=r'}',
     variable_start_string=r'\VAR{',

@@ -9,4 +9,4 @@ class LactolyseConfig(AppConfig):
 
     def ready(self):
         """Perform application initialization."""
-        from .executors import executor  # pylint: disable=unused-variable
+        from .executors import executor
