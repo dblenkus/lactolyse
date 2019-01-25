@@ -7,6 +7,5 @@ include pyproject.toml
 include .coveragerc
 include tests/.env
 recursive-include tests *.py *.yml
-recursive-include lactolyse/tests *.py
-# include Dockerfiles and files needed to build Docker images
-recursive-include lactolyse/docker_image Dockerfile
+recursive-include src/lactolyse/tests *.py
+include src/lactolyse/docker_image/Dockerfile

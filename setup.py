@@ -8,7 +8,7 @@ with open('README.rst') as fh:
 # Get package metadata from '__about__.py' file
 about = {}
 base_dir = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(base_dir, 'lactolyse', '__about__.py')) as fh:
+with open(os.path.join(base_dir, 'src', 'lactolyse', '__about__.py')) as fh:
     exec(fh.read(), about)
 
 setuptools.setup(
@@ -23,8 +23,9 @@ setuptools.setup(
     license=about['__license__'],
     # Exclude tests from built/installed package.
     packages=setuptools.find_packages(
-        exclude=['tests', 'tests.*', '*.tests', '*.tests.*']
+        'src', exclude=['tests', 'tests.*', '*.tests', '*.tests.*']
     ),
+    package_dir={'': 'src'},
     package_data={
         'lactolyse': [
             'static/lactolyse/css/*.css',
