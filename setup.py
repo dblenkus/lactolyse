@@ -50,6 +50,7 @@ setuptools.setup(
     extras_require={
         'package': ['twine', 'wheel'],
         'test': [
+            'black',
             'check-manifest',
             'coverage>=4.2',
             'readme_renderer',
