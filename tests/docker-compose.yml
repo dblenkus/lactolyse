@@ -1,5 +1,5 @@
 postgresql:
-    image: postgres:9.6
+    image: postgres:10
     environment:
         POSTGRES_USER: lactolyse
         POSTGRES_DB: lactolyse
