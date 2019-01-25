@@ -57,6 +57,7 @@ setuptools.setup(
             'pydocstyle~=2.1.1',
             'pylint~=1.9.1',
             'readme_renderer',
+            'twine',
         ],
     },
     classifiers=[
