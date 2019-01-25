@@ -3,6 +3,7 @@ include LICENSE
 include README.rst
 # include tests and files needed by tests
 include tox.ini
+include pyproject.toml
 include .coveragerc
 include .pylintrc
 include tests/.env
