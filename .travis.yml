@@ -67,6 +67,15 @@ jobs:
       addons: {}
       before_install: skip
       after_success: skip
+    - stage: test
+      env:
+        - TOX_ENV=migrations
+        # Set environment variables with information how to use the PostgreSQL
+        # service.
+        - LACTOLYSE_POSTGRESQL_USER=postgres
+        - LACTOLYSE_POSTGRESQL_PORT=5432
+      services: []
+      after_success: skip
 
     # NOTE: We undo all the global Travis CI step definitions to ensure
     # building of source and wheel distributions is performed in a clean
