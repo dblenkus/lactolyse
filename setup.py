@@ -14,7 +14,7 @@ with open(os.path.join(base_dir, 'lactolyse', '__about__.py')) as fh:
 
 setuptools.setup(
     name=about['__title__'],
-    version=about['__version__'],
+    use_scm_version=True,
     description=about['__summary__'],
     long_description=long_description,
     long_description_content_type='text/x-rst',
@@ -57,6 +57,7 @@ setuptools.setup(
             'pydocstyle~=2.1.1',
             'pylint~=1.9.1',
             'readme_renderer',
+            'setuptools_scm',
             'twine',
         ],
     },

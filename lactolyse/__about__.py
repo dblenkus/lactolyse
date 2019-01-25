@@ -1,14 +1,18 @@
 """Central place for package metadata."""
 
+from pkg_resources import DistributionNotFound, get_distribution
+
 # NOTE: We use __title__ instead of simply __name__ since the latter would
 #       interfere with a global variable __name__ denoting object's name.
 __title__ = 'lactolyse'
 __summary__ = 'Django package for lactate threshold analyses'
 __url__ = 'https://github.com/dblenkus/lactolyse'
 
-# Semantic versioning is used. For more information see:
-# https://packaging.python.org/en/latest/distributing/#semantic-versioning-preferred
-__version__ = '0.9.0a6'
+try:
+    __version__ = get_distribution(__title__).version
+except DistributionNotFound:
+    # Package is not (yet) installed.
+    pass
 
 __author__ = 'Domen Blenkuš'
 __email__ = 'domen@blenkus.com'
