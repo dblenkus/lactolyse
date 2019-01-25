@@ -31,9 +31,7 @@ class LactateMeasurementForm(forms.ModelForm):
         model = LactateMeasurement
         fields = ['power', 'heart_rate', 'lactate']
 
-    layout = Layout(
-        Row('power', 'heart_rate', 'lactate')
-    )
+    layout = Layout(Row('power', 'heart_rate', 'lactate'))
 
     def save(self, analyses, commit=True):
         """Asign the measurement to the analysis and save it."""

@@ -16,7 +16,9 @@ latex_jinja_env = jinja2.Environment(
     line_comment_prefix=r'%#',
     trim_blocks=True,
     autoescape=False,
-    loader=jinja2.PackageLoader('lactolyse', os.path.join('templates', 'lactolyse', 'latex'))
+    loader=jinja2.PackageLoader(
+        'lactolyse', os.path.join('templates', 'lactolyse', 'latex')
+    ),
 )
 
 
@@ -70,7 +72,9 @@ class BaseAnalysis:
     @property
     def run_command(self):
         """Command for preparing report."""
-        return 'xelatex -interaction=nonstopmode -jobname={0} {0}.tex'.format(TEX_JOB_NAME)
+        return 'xelatex -interaction=nonstopmode -jobname={0} {0}.tex'.format(
+            TEX_JOB_NAME
+        )
 
     def render_template(self):
         """Redner template and save it to a file."""

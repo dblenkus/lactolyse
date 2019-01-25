@@ -43,11 +43,7 @@ class LactateThresholdAnalyses(BaseAnalysis):
         # Find the point where polynomial starts to raise - threshold is
         # 0.5 - and take only real roots (hopefully there is only one).
         roots = np.roots(lac_poly.poly - (lac_poly.poly(min_x) + 0.5))
-        roots = roots[np.logical_and(
-            np.isreal(roots),
-            roots > min_x,
-            roots < max_x,
-        )]
+        roots = roots[np.logical_and(np.isreal(roots), roots > min_x, roots < max_x)]
         start_x = max(roots).real
 
         # Calculate the vector cross product.
@@ -58,10 +54,7 @@ class LactateThresholdAnalyses(BaseAnalysis):
         cross_z = v_x * u_y - v_y * u_x
 
         ftp = np.roots(cross_z.deriv())
-        ftp = ftp[np.logical_and(
-            ftp > start_x,
-            ftp < max_x,
-        )]
+        ftp = ftp[np.logical_and(ftp > start_x, ftp < max_x)]
         ftp = ftp[0]
 
         return {
@@ -87,14 +80,12 @@ class LactateThresholdAnalyses(BaseAnalysis):
             np.polyfit(
                 [start_point, start_point + 5],
                 [lac_poly.poly(start_point), lac_poly.poly(start_point + 5)],
-                1
+                1,
             )
         )
         end_line = np.poly1d(
             np.polyfit(
-                [max_x - 5, max_x],
-                [lac_poly.poly(max_x - 5), lac_poly.poly(max_x)],
-                1
+                [max_x - 5, max_x], [lac_poly.poly(max_x - 5), lac_poly.poly(max_x)], 1
             )
         )
 
@@ -114,7 +105,9 @@ class LactateThresholdAnalyses(BaseAnalysis):
         """Calculate context for at method."""
         roots = np.roots(lac_poly.poly - threshold)
         roots = roots[np.isreal(roots)]
-        roots = filter(lambda val: inputs['power'][0] < val < inputs['power'][-1], roots)
+        roots = filter(
+            lambda val: inputs['power'][0] < val < inputs['power'][-1], roots
+        )
 
         power = list(roots)[0].real
 
@@ -144,7 +137,7 @@ class LactateThresholdAnalyses(BaseAnalysis):
 
     def get_results(self, context):
         """Return the result of the analysis."""
-        return{
+        return {
             'dmax': context['dmax']['power'],
             'cross': context['cross']['power'],
             'at2': context['at2']['power'],

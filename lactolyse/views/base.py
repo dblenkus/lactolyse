@@ -26,15 +26,11 @@ class MultiFormView(FormView):
 
         kwargs = {}
         for key in self.form_classes:
-            kwargs[key] = {
-                'initial': initial.get(key),
-                'prefix': self.get_prefix(),
-            }
+            kwargs[key] = {'initial': initial.get(key), 'prefix': self.get_prefix()}
             if self.request.method in ('POST', 'PUT'):
-                kwargs[key].update({
-                    'data': self.request.POST,
-                    'files': self.request.FILES,
-                })
+                kwargs[key].update(
+                    {'data': self.request.POST, 'files': self.request.FILES}
+                )
 
         return kwargs
 

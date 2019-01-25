@@ -12,6 +12,6 @@ urlpatterns = [
     path(
         'download/lactate_threshold/<int:pk>/',
         views.lactate_threshold_download_view,
-        name='download_lactate_threshold'
+        name='download_lactate_threshold',
     ),
 ]

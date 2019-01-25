@@ -1,4 +1,3 @@
-
 import os.path
 import setuptools
 
@@ -32,7 +31,7 @@ setuptools.setup(
             'templates/*.html',
             'templates/lactolyse/*.html',
             'templates/lactolyse/latex/*.tex',
-        ],
+        ]
     },
     python_requires='>=3.6, <3.7',
     install_requires=[
@@ -45,7 +44,6 @@ setuptools.setup(
         'Jinja2~=2.10',
         'numpy~=1.14.0',
         'psycopg2-binary~=2.7.0',
-
     ],
     extras_require={
         'package': ['twine', 'wheel'],

@@ -41,6 +41,7 @@ docker_client = docker.from_env()
 
 def remove_docker_container(container_id):
     """Return the function which removes the Docker container with thhe given id when called."""
+
     def _remove_container():
         """Remove the Docker container."""
         try:
@@ -55,7 +56,7 @@ def remove_docker_container(container_id):
     return _remove_container
 
 
-class DockerExecutor():
+class DockerExecutor:
     """Executor using Docker container for the environment.
 
     This executor starts a Docker container at the initiazlization and
@@ -74,7 +75,9 @@ class DockerExecutor():
 
     def _create_container(self, ignore_errors=False):
         """Create the container."""
-        runtime_mount = docker.types.Mount(DOCKER_MOUNT_POINT, self._runtime_root.name, 'bind')
+        runtime_mount = docker.types.Mount(
+            DOCKER_MOUNT_POINT, self._runtime_root.name, 'bind'
+        )
 
         logger.debug("Creating container.")
         try:
@@ -98,12 +101,12 @@ class DockerExecutor():
         """Validate that given analysis has required parameters."""
         cls_name = analysis.__name__
 
-        assert analysis.name, (
-            "Subclass '{}' must have defined 'name' attribute.".format(cls_name)
-        )
-        assert analysis.template, (
-            "Subclass '{}' must have defined 'template' attribute.".format(cls_name)
-        )
+        assert (
+            analysis.name
+        ), "Subclass '{}' must have defined 'name' attribute.".format(cls_name)
+        assert (
+            analysis.template
+        ), "Subclass '{}' must have defined 'template' attribute.".format(cls_name)
 
     def _discover_analyses(self):
         """Iterate over files in analyses package and import all found analyses."""
@@ -117,15 +120,19 @@ class DockerExecutor():
             for attr_name in dir(module):
                 attr = getattr(module, attr_name)
 
-                if (not inspect.isclass(attr)
-                        or not issubclass(attr, BaseAnalysis)
-                        or attr is BaseAnalysis):
+                if (
+                    not inspect.isclass(attr)
+                    or not issubclass(attr, BaseAnalysis)
+                    or attr is BaseAnalysis
+                ):
                     continue
 
                 self._validate_analysis(attr)
                 self._analyses[attr.name] = attr
 
-        logger.info("Found %d analyses: %s", len(self._analyses), list(self._analyses.keys()))
+        logger.info(
+            "Found %d analyses: %s", len(self._analyses), list(self._analyses.keys())
+        )
 
     def _check_container(self):
         """Check that container is up and running.

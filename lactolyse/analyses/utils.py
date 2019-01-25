@@ -35,11 +35,13 @@ class FittedPolynomial:
         if self._deriv_roots is None:
             self._deriv_roots = np.roots(self.deriv)
 
-            self._deriv_roots = self._deriv_roots[np.logical_and(
-                np.isreal(self._deriv_roots),
-                self._deriv_roots > self.min_x,
-                self._deriv_roots < self.max_x,
-            )]
+            self._deriv_roots = self._deriv_roots[
+                np.logical_and(
+                    np.isreal(self._deriv_roots),
+                    self._deriv_roots > self.min_x,
+                    self._deriv_roots < self.max_x,
+                )
+            ]
 
         return self._deriv_roots
 
@@ -61,10 +63,12 @@ class FittedPolynomial:
         if self._second_deriv_roots is None:
             self._second_deriv_roots = np.roots(self.second_deriv)
 
-            self._second_deriv_roots = self._second_deriv_roots[np.logical_and(
-                np.isreal(self._second_deriv_roots),
-                self._second_deriv_roots > self.min_x,
-                self._second_deriv_roots < self.max_x,
-            )]
+            self._second_deriv_roots = self._second_deriv_roots[
+                np.logical_and(
+                    np.isreal(self._second_deriv_roots),
+                    self._second_deriv_roots > self.min_x,
+                    self._second_deriv_roots < self.max_x,
+                )
+            ]
 
         return self._second_deriv_roots

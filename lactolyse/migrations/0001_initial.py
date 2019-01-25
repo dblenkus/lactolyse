@@ -9,14 +9,21 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
             name='Athlete',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('name', models.CharField(max_length=100)),
                 ('age', models.IntegerField()),
                 ('weight', models.DecimalField(decimal_places=2, max_digits=5)),
@@ -25,7 +32,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LactateMeasurement',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('power', models.IntegerField()),
                 ('heart_rate', models.IntegerField()),
                 ('lactate', models.DecimalField(decimal_places=2, max_digits=4)),
@@ -34,15 +49,37 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LactateThresholdAnalyses',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID',
+                    ),
+                ),
                 ('created', models.DateField(auto_now_add=True)),
-                ('report', models.FileField(upload_to=lactolyse.models.generate_lactate_threshold_name)),
-                ('athlete', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lactolyse.Athlete')),
+                (
+                    'report',
+                    models.FileField(
+                        upload_to=lactolyse.models.generate_lactate_threshold_name
+                    ),
+                ),
+                (
+                    'athlete',
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to='lactolyse.Athlete',
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
             model_name='lactatemeasurement',
             name='analyses',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='lactolyse.LactateThresholdAnalyses'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='lactolyse.LactateThresholdAnalyses',
+            ),
         ),
     ]

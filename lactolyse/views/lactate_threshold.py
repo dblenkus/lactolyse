@@ -28,10 +28,7 @@ class LactateThresholdView(LoginRequiredMixin, MultiFormView):
     form_classes = {
         'athlete': AthleteForm,
         'measurements': formset_factory(
-            LactateMeasurementForm,
-            min_num=5,
-            extra=10,
-            validate_min=True,
+            LactateMeasurementForm, min_num=5, extra=10, validate_min=True
         ),
     }
 
@@ -58,8 +55,7 @@ class LactateThresholdView(LoginRequiredMixin, MultiFormView):
             athlete = forms['athlete'].save(contributor=self.request.user)
 
             analyses = LactateThresholdAnalyses.objects.create(
-                contributor=self.request.user,
-                athlete=athlete,
+                contributor=self.request.user, athlete=athlete
             )
 
             measurements = []
@@ -83,7 +79,7 @@ class LactateThresholdView(LoginRequiredMixin, MultiFormView):
                 'type': MAKE_REPORT_TYPE,
                 'analysis_pk': analysis.pk,
                 'notify_channel': GROUP_SESSIONS.format(websocket_id=session_id),
-            }
+            },
         )
 
         return super().forms_valid(forms)

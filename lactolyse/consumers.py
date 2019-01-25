@@ -21,14 +21,12 @@ class RunAnalysisConsumer(SyncConsumer):
 
     def lactolyse_makereport(self, event):
         """Make report for Lactate Thresold Analysis."""
-        analysis = LactateThresholdAnalyses.objects.select_related(
-            'athlete'
-        ).prefetch_related(
-            'lactatemeasurement_set'
-        ).get(pk=event['analysis_pk'])
-        measurements = analysis.lactatemeasurement_set.order_by(
-            'power'
-        ).values(
+        analysis = (
+            LactateThresholdAnalyses.objects.select_related('athlete')
+            .prefetch_related('lactatemeasurement_set')
+            .get(pk=event['analysis_pk'])
+        )
+        measurements = analysis.lactatemeasurement_set.order_by('power').values(
             'power', 'heart_rate', 'lactate'
         )
 
@@ -60,8 +58,10 @@ class RunAnalysisConsumer(SyncConsumer):
             event['notify_channel'],
             {
                 'type': 'websocket_send',
-                'download_url': reverse('download_lactate_threshold', kwargs={'pk': analysis.pk}),
-            }
+                'download_url': reverse(
+                    'download_lactate_threshold', kwargs={'pk': analysis.pk}
+                ),
+            },
         )
 
 
