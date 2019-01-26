@@ -23,11 +23,10 @@ from django.urls import include, path
 urlpatterns = [
     path(
         'login/',
-        auth_views.login,
-        {'template_name': 'lactolyse/login.html'},
+        auth_views.LoginView.as_view(template_name='lactolyse/login.html'),
         name='login',
     ),
-    path('logout/', auth_views.logout, {'next_page': 'index'}, name='logout'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='index'), name='logout'),
     path('admin/', admin.site.urls),
     path('', include('lactolyse.urls')),
 ]
