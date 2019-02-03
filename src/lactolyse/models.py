@@ -84,3 +84,39 @@ class LactateMeasurement(models.Model):
         return "name: {}, power: {}, heart rate: {}, lactate: {}".format(
             self.analyses.athlete.name, self.power, self.heart_rate, self.lactate
         )
+
+
+class ConconiTestAnalyses(models.Model):
+    """Lactate Threshold Analyses model."""
+
+    contributor = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL
+    )
+
+    athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
+
+    created = models.DateField(auto_now_add=True)
+
+    report = models.FileField(upload_to=generate_lactate_threshold_name)
+
+    result = models.IntegerField(null=True)
+
+    def __str__(self):
+        """Format model name."""
+        return "athlete: {}, date: {}".format(self.athlete.name, self.created)
+
+
+class ConconiMeasurement(models.Model):
+    """Lactate Measurement model."""
+
+    analyses = models.ForeignKey(ConconiTestAnalyses, on_delete=models.CASCADE)
+
+    power = models.IntegerField()
+
+    heart_rate = models.IntegerField()
+
+    def __str__(self):
+        """Format model name."""
+        return "name: {}, power: {}, heart rate: {}".format(
+            self.analyses.athlete.name, self.power, self.heart_rate
+        )

@@ -3,7 +3,7 @@ from django import forms
 
 from material import Layout, Row
 
-from .models import Athlete, LactateMeasurement
+from .models import Athlete, ConconiMeasurement, LactateMeasurement
 
 
 class AthleteForm(forms.ModelForm):
@@ -32,6 +32,24 @@ class LactateMeasurementForm(forms.ModelForm):
         fields = ['power', 'heart_rate', 'lactate']
 
     layout = Layout(Row('power', 'heart_rate', 'lactate'))
+
+    def save(self, analyses, commit=True):
+        """Asign the measurement to the analysis and save it."""
+        self.instance.analyses = analyses
+
+        return super().save(commit=commit)
+
+
+class ConconiMeasurementForm(forms.ModelForm):
+    """Form for ConconiMeasurement model."""
+
+    class Meta:
+        """ConconiMeasurementForm Meta options."""
+
+        model = ConconiMeasurement
+        fields = ['power', 'heart_rate']
+
+    layout = Layout(Row('power', 'heart_rate'))
 
     def save(self, analyses, commit=True):
         """Asign the measurement to the analysis and save it."""

@@ -4,6 +4,7 @@ import os
 from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 
+from .conconi_test import ConconiTestView
 from .download import ReportDownloadView
 from .lactate_threshold import LactateThresholdView
 
@@ -18,4 +19,5 @@ analyses_success_view = login_required(
     )
 )
 lactate_threshold_view = LactateThresholdView.as_view()
+conconi_test_view = ConconiTestView.as_view()
 report_download_view = ReportDownloadView.as_view()
