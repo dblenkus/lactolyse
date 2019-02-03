@@ -129,3 +129,34 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
+
+
+# Logging.
+
+# Set LACTOLYSE_LOG_FILE environment variable to a file path to enable
+# logging debugging messages to to a file.
+debug_file_path = os.environ.get('LACTOLYSE_LOG_FILE', os.devnull)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s - %(levelname)s - %(name)s[%(process)s]: %(message)s'
+        }
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'level': 'INFO',
+            'formatter': 'standard',
+        },
+        'file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': debug_file_path,
+            'formatter': 'standard',
+            'maxBytes': 1024 * 1024 * 10,  # 10 MB
+        },
+    },
+    'loggers': {'': {'handlers': ['file', 'console'], 'level': 'DEBUG'}},
+}
