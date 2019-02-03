@@ -3,20 +3,18 @@ import os
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404
 from django.views import View
 
 from lactolyse.models import LactateThresholdAnalyses
+from lactolyse.utils import deserialize_model_instance
 
 
-class DownloadFileView(View):
+class ReportDownloadView(View):
     """Download view."""
 
-    analysis_model = None
-
-    def get(self, request, pk):
+    def get(self, request, ref):
         """Serve the file specified in Django's session."""
-        analysis = get_object_or_404(self.analysis_model, pk=pk)
+        analysis = deserialize_model_instance(ref)
 
         if analysis.contributor != request.user and not request.user.is_superuser:
             return HttpResponseBadRequest()
@@ -31,9 +29,3 @@ class DownloadFileView(View):
         response['Content-Disposition'] = 'attachment; filename="Report.pdf"'
 
         return response
-
-
-class LactateThresholdAnalysesDownloadView(DownloadFileView):
-    """Download view for Lactate Threshold Analysis."""
-
-    analysis_model = LactateThresholdAnalyses

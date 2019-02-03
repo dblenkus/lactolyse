@@ -14,12 +14,13 @@ from channels.generic.websocket import JsonWebsocketConsumer
 from lactolyse.executors import executor
 from lactolyse.models import LactateThresholdAnalyses
 from lactolyse.protocol import GROUP_SESSIONS
+from lactolyse.utils import serialize_model_instance
 
 
 class RunAnalysisConsumer(SyncConsumer):
     """Consumer for running the executor."""
 
-    def lactolyse_makereport(self, event):
+    def lactolyse_lactate_report(self, event):
         """Make report for Lactate Thresold Analysis."""
         analysis = (
             LactateThresholdAnalyses.objects.select_related('athlete')
@@ -59,7 +60,8 @@ class RunAnalysisConsumer(SyncConsumer):
             {
                 'type': 'websocket_send',
                 'download_url': reverse(
-                    'download_lactate_threshold', kwargs={'pk': analysis.pk}
+                    'download_report',
+                    kwargs={'ref': serialize_model_instance(analysis)},
                 ),
             },
         )

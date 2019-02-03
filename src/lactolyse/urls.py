@@ -10,8 +10,6 @@ urlpatterns = [
     path('tests/lactate/', views.lactate_threshold_view, name='lactate_analyses'),
     path('tests/success/', views.analyses_success_view, name='analyses_success'),
     path(
-        'download/lactate_threshold/<int:pk>/',
-        views.lactate_threshold_download_view,
-        name='download_lactate_threshold',
+        'download/report/<str:ref>/', views.report_download_view, name='download_report'
     ),
 ]

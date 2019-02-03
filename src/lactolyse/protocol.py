@@ -2,6 +2,6 @@
 
 RUN_ANALYSIS_CHANNEL = 'lactolyse.runanalysis'
 
-MAKE_REPORT_TYPE = 'lactolyse.makereport'
+LACTATE_REPORT_TYPE = 'lactolyse.lactate_report'
 
 GROUP_SESSIONS = 'lactolyse.session.{websocket_id}'

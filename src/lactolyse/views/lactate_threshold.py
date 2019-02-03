@@ -13,7 +13,7 @@ from channels.layers import get_channel_layer
 
 from lactolyse.forms import AthleteForm, LactateMeasurementForm
 from lactolyse.models import LactateThresholdAnalyses
-from lactolyse.protocol import GROUP_SESSIONS, MAKE_REPORT_TYPE, RUN_ANALYSIS_CHANNEL
+from lactolyse.protocol import GROUP_SESSIONS, LACTATE_REPORT_TYPE, RUN_ANALYSIS_CHANNEL
 
 from .base import MultiFormView
 
@@ -76,7 +76,7 @@ class LactateThresholdView(LoginRequiredMixin, MultiFormView):
         async_to_sync(channel_layer.send)(
             RUN_ANALYSIS_CHANNEL,
             {
-                'type': MAKE_REPORT_TYPE,
+                'type': LACTATE_REPORT_TYPE,
                 'analysis_pk': analysis.pk,
                 'notify_channel': GROUP_SESSIONS.format(websocket_id=session_id),
             },
