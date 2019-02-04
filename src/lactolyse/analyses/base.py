@@ -3,6 +3,8 @@ import os
 
 import jinja2
 
+from lactolyse.registry import registry
+
 TEX_JOB_NAME = 'report'
 
 latex_jinja_env = jinja2.Environment(
@@ -22,7 +24,30 @@ latex_jinja_env = jinja2.Environment(
 )
 
 
-class BaseAnalysis:
+def validate_analysis(analysis):
+        cls_name = analysis.__name__
+
+        assert (
+            analysis.name
+        ), "Subclass '{}' must have defined 'name' attribute.".format(cls_name)
+        assert (
+            analysis.template
+        ), "Subclass '{}' must have defined 'template' attribute.".format(cls_name)
+
+
+class BaseAnalysisMeta(type):
+    def __new__(mcs, name, bases, namespace):
+        cls = type.__new__(mcs, name, bases, namespace)
+        if not (
+            cls.__module__ == 'lactolyse.analyses.base'
+            and cls.__name__ == 'BaseAnalysis'
+        ):
+            validate_analysis(cls)
+            registry.add(cls)
+        return cls
+
+
+class BaseAnalysis(metaclass=BaseAnalysisMeta):
     """Base class for performing analyses."""
 
     def __init__(self, runtime_dir):

@@ -25,13 +25,12 @@ from importlib import import_module
 
 import docker
 
-from lactolyse.analyses.base import BaseAnalysis
+from lactolyse.registry import registry
 
 logger = logging.getLogger(__name__)
 
 __all__ = ('executor',)
 
-ANALYSES_PACKAGE = 'lactolyse.analyses'
 DOCKER_IMAGE = 'domenblenkus/lactolyse:latest'
 DOCKER_START_COMMAND = "/bin/sh -c 'sleep infinity'"
 DOCKER_MOUNT_POINT = '/mnt'
@@ -68,10 +67,8 @@ class DockerExecutor:
         logger.info("Runtime root: %s", self._runtime_root.name)
 
         self._container = None
-        self._analyses = {}
 
         self._create_container(ignore_errors=True)
-        self._discover_analyses()
 
     def _create_container(self, ignore_errors=False):
         """Create the container."""
@@ -96,43 +93,6 @@ class DockerExecutor:
 
         # Remove the container on exit.
         atexit.register(remove_docker_container(self._container.id))
-
-    def _validate_analysis(self, analysis):
-        """Validate that given analysis has required parameters."""
-        cls_name = analysis.__name__
-
-        assert (
-            analysis.name
-        ), "Subclass '{}' must have defined 'name' attribute.".format(cls_name)
-        assert (
-            analysis.template
-        ), "Subclass '{}' must have defined 'template' attribute.".format(cls_name)
-
-    def _discover_analyses(self):
-        """Iterate over files in analyses package and import all found analyses."""
-        analyses_package = import_module(ANALYSES_PACKAGE)
-        files = next(os.walk(analyses_package.__path__[0]))[2]
-
-        for fn in files:
-            fn = fn.rstrip('.py')
-            module = import_module('{}.{}'.format(ANALYSES_PACKAGE, fn))
-
-            for attr_name in dir(module):
-                attr = getattr(module, attr_name)
-
-                if (
-                    not inspect.isclass(attr)
-                    or not issubclass(attr, BaseAnalysis)
-                    or attr is BaseAnalysis
-                ):
-                    continue
-
-                self._validate_analysis(attr)
-                self._analyses[attr.name] = attr
-
-        logger.info(
-            "Found %d analyses: %s", len(self._analyses), list(self._analyses.keys())
-        )
 
     def _check_container(self):
         """Check that container is up and running.
@@ -168,17 +128,10 @@ class DockerExecutor:
         if not isinstance(inputs, dict):
             raise ValueError("Attribute 'inputs' must be of type 'dict' or 'None'.")
 
-        if analysis not in self._analyses.keys():
-            raise ValueError(
-                "Unknown analysis '{}', select one of the following: {}".format(
-                    analysis, ", ".join(self._analyses.keys())
-                )
-            )
-
         self._check_container()
 
         with tempfile.TemporaryDirectory(dir=self._runtime_root.name) as runtime_dir:
-            analysis = self._analyses[analysis](runtime_dir=runtime_dir)
+            analysis = registry.get(analysis)(runtime_dir=runtime_dir)
 
             start_time = time.time()
 
