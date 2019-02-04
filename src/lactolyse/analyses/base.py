@@ -25,14 +25,14 @@ latex_jinja_env = jinja2.Environment(
 
 
 def validate_analysis(analysis):
-        cls_name = analysis.__name__
+    cls_name = analysis.__name__
 
-        assert (
-            analysis.name
-        ), "Subclass '{}' must have defined 'name' attribute.".format(cls_name)
-        assert (
-            analysis.template
-        ), "Subclass '{}' must have defined 'template' attribute.".format(cls_name)
+    assert analysis.name, "Subclass '{}' must have defined 'name' attribute.".format(
+        cls_name
+    )
+    assert (
+        analysis.template
+    ), "Subclass '{}' must have defined 'template' attribute.".format(cls_name)
 
 
 class BaseAnalysisMeta(type):
