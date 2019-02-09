@@ -7,9 +7,12 @@ Exectuors
 Executor is the central point which takes care to setup the runtime
 environment and run all analyses.
 
-At the moment only Docker executor is implemented:
+Built-in executors are:
 
 .. autoclass:: lactolyse.executors.docker.Executor
+    :members:
+
+.. autoclass:: lactolyse.executors.local.Executor
     :members:
 
 """
