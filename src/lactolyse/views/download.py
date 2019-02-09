@@ -1,6 +1,4 @@
 """Lactolyse download views."""
-import os
-
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views import View
 
@@ -20,7 +18,7 @@ class ReportDownloadView(View):
 
         response = HttpResponse(analysis.report.read())
         response['Content-Type'] = 'application/pdf'
-        response['Content-Length'] = os.path.getsize(file_path)
+        response['Content-Length'] = analysis.report.size
         response['Content-Disposition'] = 'attachment; filename="Report.pdf"'
 
         return response
