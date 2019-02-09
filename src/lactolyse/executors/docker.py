@@ -1,35 +1,15 @@
-""".. Ignore pydocstyle D400.
-
-========
-Exectuor
-========
-
-Executor is the central point which takes care to setup the runtime
-environment and run all analyses.
-
-At the moment only Docker executor is implemented:
-
-.. autoclass:: lactolyse.executors.DockerExecutor
-    :members:
-
-"""
 import atexit
-import inspect
 import logging
 import os
 import shutil
-import sys
 import tempfile
 import time
-from importlib import import_module
 
 import docker
 
 from lactolyse.registry import registry
 
 logger = logging.getLogger(__name__)
-
-__all__ = ('executor',)
 
 DOCKER_IMAGE = 'domenblenkus/lactolyse:latest'
 DOCKER_START_COMMAND = "/bin/sh -c 'sleep infinity'"
@@ -55,7 +35,7 @@ def remove_docker_container(container_id):
     return _remove_container
 
 
-class DockerExecutor:
+class Executor:
     """Executor using Docker container for the environment.
 
     This executor starts a Docker container at the initiazlization and
@@ -154,15 +134,8 @@ class DockerExecutor:
             if result.exit_code != 0:
                 message = "Something went wrong while rendering report."
                 logger.error(message)
-                print(result.output)
                 raise RuntimeError(message)
 
             shutil.copy(analysis.get_pdf_file(), output_path)
 
         return analysis.run_get_results()
-
-
-executor = None
-# Initialize executor only in workers.
-if sys.argv[1] == 'runworker':
-    executor = DockerExecutor()

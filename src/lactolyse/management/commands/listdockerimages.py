@@ -6,7 +6,7 @@ List Docker images
 """
 from django.core.management.base import BaseCommand
 
-from lactolyse.executors import executor
+from lactolyse.executors.docker import Executor as DockerExecutor
 
 
 class Command(BaseCommand):
@@ -16,5 +16,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Handle command listdockerimages."""
+        executor = DockerExecutor()
         images = executor.get_docker_images()
         self.stdout.write('\n'.join(images))
