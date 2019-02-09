@@ -24,6 +24,12 @@ def generate_lactate_threshold_name(instance, filename):
     return _generate_report_name(instance, filename, prefix)
 
 
+def generate_conconi_test_name(instance, filename):
+    """Generate an unique filename for report based on it's hash."""
+    prefix = os.path.join('reports', 'conconi_test')
+    return _generate_report_name(instance, filename, prefix)
+
+
 class Athlete(models.Model):
     """Athlete model."""
 
@@ -97,7 +103,7 @@ class ConconiTestAnalyses(models.Model):
 
     created = models.DateField(auto_now_add=True)
 
-    report = models.FileField(upload_to=generate_lactate_threshold_name)
+    report = models.FileField(upload_to=generate_conconi_test_name)
 
     result = models.IntegerField(null=True)
 
