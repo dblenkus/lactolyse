@@ -72,5 +72,5 @@ except ImportError:
 
 executor = None
 # Initialize executor only in workers.
-if sys.argv[1] == 'runworker':
+if len(sys.argv) > 1 and sys.argv[1] == 'runworker':
     executor = load_executor(LACTOLYSE_EXECUTOR).Executor()
