@@ -34,7 +34,7 @@ setuptools.setup(
             'templates/lactolyse/latex/*.tex',
         ]
     },
-    python_requires='>=3.6, <3.7',
+    python_requires='>=3.6, <3.8',
     install_requires=[
         'asgiref~=2.3.2',
         'channels~=2.1.6',
@@ -72,6 +72,7 @@ setuptools.setup(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
     keywords='ftp lactate threshold',
 )
