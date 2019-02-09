@@ -41,6 +41,7 @@ class Executor:
             if result.returncode != 0:
                 message = "Something went wrong while rendering report."
                 logger.error(message)
+                print(result.stdout)
                 raise RuntimeError(message)
 
             shutil.copy(analysis.get_pdf_file(), output_path)
