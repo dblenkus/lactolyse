@@ -1,9 +1,12 @@
 # Global Travis CI step definitions that will be used by all jobs unless
 # explicitly overriden in the jobs.include matrix.
 
-language: python
-# We need to be able to install packages.
+dist: xenial
+# This is required to use Python 3.7:
+# https://github.com/travis-ci/travis-ci/issues/9069#issuecomment-425720905
 sudo: required
+
+language: python
 python: "3.6"
 
 branches:
@@ -16,22 +19,7 @@ services:
   - redis-server
 
 addons:
-  # NOTE: We need to use the postgresql addon since the default PostgreSQL
-  # service provided on Trusty machines is PostgreSQL 9.2.
   postgresql: "10"
-  apt:
-    packages:
-      - postgresql-10
-      - postgresql-client-10
-
-before_install:
-  # NOTE: We need to manually reconfigure PostgreSQL 10 since Travis CI doesn't
-  # provide standard configuration out-of-the-box.
-  # For more details, see:
-  # https://github.com/travis-ci/travis-ci/issues/8537#issuecomment-416467506
-  - sudo sed -i 's/port = 5433/port = 5432/' /etc/postgresql/10/main/postgresql.conf
-  - sudo cp /etc/postgresql/{9.6,10}/main/pg_hba.conf
-  - sudo service postgresql restart
 
 install: pip install tox
 
@@ -59,13 +47,11 @@ jobs:
       env: TOX_ENV=linters
       services: []
       addons: {}
-      before_install: skip
       after_success: skip
     - stage: test
       env: TOX_ENV=packaging
       services: []
       addons: {}
-      before_install: skip
       after_success: skip
     - stage: test
       env:
@@ -83,7 +69,6 @@ jobs:
     - stage: release
       services: []
       addons: {}
-      before_install: skip
       # Project uses setuptools_scm to determine the version from a SCM tag.
       install: pip install setuptools_scm
       script: skip
