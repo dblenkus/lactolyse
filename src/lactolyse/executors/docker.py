@@ -96,6 +96,7 @@ class Executor:
             logger.warning("Container was not running, starting it.")
             self._container.start()
 
+    @classmethod
     def get_docker_images(self):
         """Return list of Docker images used by executor."""
         return [DOCKER_IMAGE]

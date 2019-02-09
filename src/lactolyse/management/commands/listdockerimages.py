@@ -16,6 +16,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         """Handle command listdockerimages."""
-        executor = DockerExecutor()
-        images = executor.get_docker_images()
+        images = DockerExecutor.get_docker_images()
         self.stdout.write('\n'.join(images))
