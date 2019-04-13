@@ -44,7 +44,7 @@ setuptools.setup(
         # of asgiref~=2.3
         # https://github.com/django/channels/issues/1277
         'daphne~=2.2.0',
-        'Django~=2.1.5',
+        'Django~=2.2.0',
         'django-material~=1.4.1',
         'docker~=3.7.0',
         'Jinja2~=2.10',
