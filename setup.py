@@ -39,6 +39,11 @@ setuptools.setup(
         'asgiref~=2.3.2',
         'channels~=2.1.6',
         'channels_redis~=2.3.3',
+        # XXX: Temporarily pin Daphne since the latest version requires
+        # asgiref~=3.0 which is incompatible with Channels requirement
+        # of asgiref~=2.3
+        # https://github.com/django/channels/issues/1277
+        'daphne~=2.2.0',
         'Django~=2.1.5',
         'django-material~=1.4.1',
         'docker~=3.7.0',
