@@ -46,6 +46,10 @@ class LactateThresholdAnalyses(BaseAnalysis):
         roots = roots[np.logical_and(np.isreal(roots), roots > min_x, roots < max_x)]
         start_x = max(roots).real
 
+        x_values = lac_poly.x_values[:]
+        x_values = filter(lambda pwr: pwr < start_x, x_values)
+        start_x = list(x_values)[-1]
+
         # Calculate the vector cross product.
         v_x = np.poly1d(max_x - start_x)
         v_y = np.poly1d(lac_poly.poly(max_x) - lac_poly.poly(start_x))

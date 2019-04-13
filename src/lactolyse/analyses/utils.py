@@ -12,12 +12,12 @@ class FittedPolynomial:
 
     def __init__(self, x_values, y_values):
         """Initialize fitted polynomial."""
-        self._x_values = x_values
-        self._y_values = y_values
+        self.x_values = x_values
+        self.y_values = y_values
 
         self.poly = np.poly1d(np.polyfit(x_values, y_values, 3))
 
-        self.error = sum(np.square(self.poly(self._x_values) - self._y_values))
+        self.error = sum(np.square(self.poly(self.x_values) - self.y_values))
 
         self.min_x = min(x_values)
         self.max_x = max(x_values)
