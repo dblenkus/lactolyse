@@ -1,0 +1,125 @@
+\documentclass{article}
+\title{Poročilo Laktatni test}
+\author{Simon Cirnski}
+
+\usepackage[margin=0.7in]{geometry}
+
+\usepackage{makecell}
+\usepackage{multirow}
+\usepackage{amsmath}
+
+\usepackage{tikz,pgfplots}
+\usetikzlibrary{calc}
+
+\DeclareMathSymbol{:}{\mathord}{operators}{"3A}
+
+\begin{document}
+
+  \maketitle
+
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{r||c|c|c|}
+                           & Pace [min/km]                        & Heart Rate [bpm]                      & Blood Lactate [mMol]                           \\ \hline \hline
+      \BLOCK{ for i in range( inputs['pace'] | length) }
+        \VAR{ loop.index } & \VAR{ inputs['pace'][i] | s_to_min } & \VAR{ inputs['heart_rate'][i] | int } & \VAR{ '%.1f' | format(inputs['lactate'][i]) }  \BLOCK{ if not loop.last }\\\BLOCK{ endif }
+      \BLOCK{ endfor }
+    \end{tabular}
+    \caption{Meritve}
+  \end{table}
+
+  \def\lacpoly(#1){\VAR{ lac_poly.poly.coef[0] }*(#1)^3 + \VAR{ lac_poly.poly.coef[1] }*(#1)^2 +  \VAR{ lac_poly.poly.coef[2] }*(#1) + \VAR{ lac_poly.poly.coef[3] }}
+  \def\coordinates{
+    \BLOCK{ for i in range( inputs['pace'] | length) }
+      (\VAR{ inputs['pace'][i] }, \VAR{ inputs['lactate'][i] })
+    \BLOCK{ endfor }
+  }
+  \def\xmin{\VAR{ inputs['pace'][0] }}
+  \def\xmax{\VAR{ inputs['pace'][-1] }}
+  \def\ymin{0}
+  \def\ymax{\VAR{ inputs['lactate'][0] }}
+
+  \pgfplotsset{
+    axis y line=left,
+    ylabel near ticks,
+    ylabel=Blood Lactate {[}mMol{]},
+    ytick={0,2,...,50},
+    axis x line=bottom,
+    xlabel=Pace {[}min/km{]},
+    xtick={0, 30,..., 600},
+    xticklabels = {0:00, 0:30, 1:00, 1:30, 2:00, 2:30, 3:00, 3:30, 4:00, 4:30, 5:00, 5:30, 6:00, 6:30, 7:00, 7:30, 8:00, 8:30, 9:00, 9:30, 10:00},
+    width=8.5cm,
+    height=8.5cm,
+    xmin=\xmin - 40,
+    xmax=\xmax + 40,
+    ymin=0,
+    ymax=\ymax + 2,
+    grid,
+  }
+
+  \begin{tikzpicture}
+  \begin{axis}[x post scale=-1]
+    \coordinate (start) at (axis cs: \VAR{ dmax['start_point'][0] }, \VAR{ dmax['start_point'][1] });
+    \coordinate (dmax) at (axis cs: \VAR{ dmax['pace'] }, \VAR{ dmax['lactate'] });
+    \coordinate (end) at (axis cs: \VAR{ dmax['end_point'][0] }, \VAR{ dmax['end_point'][1] });
+    \coordinate (dmax') at ($(start)!(dmax)!(end)$);
+    \coordinate (dmax'') at (axis cs: \VAR{ dmax['pace'] }, 0);
+
+    \addplot [domain=\xmin-20:\xmax+20, thick] {\lacpoly(x)};
+    \addplot [only marks] coordinates {\coordinates};
+    \draw [thick] (start) -- (end);
+    \draw [thick] (dmax') -- (dmax);
+    \draw [thick] (dmax'') -- (dmax) node[pos=0.5, right=-0.3em] {$P=\VAR{ dmax['pace'] | s_to_min }\frac{min}{km}$};
+  \end{axis}
+  \end{tikzpicture}
+  \begin{tikzpicture}[
+    extended line/.style={shorten >=-#1},
+    extended line/.default=.5cm,
+  ]
+  \begin{axis}[x post scale=-1]
+    \coordinate (start) at (axis cs: \VAR{ cross['start_point'][0] }, \VAR{ cross['start_point'][1] });
+    \coordinate (cross) at (axis cs: \VAR{ cross['cross'][0] }, \VAR{ cross['cross'][1] });
+    \coordinate (end) at (axis cs: \VAR{ cross['end_point'][0] }, \VAR{ cross['end_point'][1] });
+    \coordinate (cross') at (axis cs: \VAR{ cross['cross'][0] }, 0);
+
+    \addplot [domain=\xmin-20:\xmax+20, thick] {\lacpoly(x)};
+    \addplot [only marks] coordinates {\coordinates};
+    \draw [thick, extended line] (start) -- (cross);
+    \draw [thick, extended line] (end) -- (cross);
+    \draw [thick] (cross') -- (cross) node[pos=0.5, right=-0.3em] {$P=\VAR{ cross['pace'] | s_to_min }\frac{min}{km}$};
+  \end{axis}
+  \end{tikzpicture}
+
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{r|r||c|c|c}
+                                                         &                     & Pace [min/km]                             & Heart Rate [bpm]                   & \makecell{Blood Lactate \\ {[}mMol]}       \\
+      \hline \hline
+      \multirow{3}{*}{\makecell{Anaerobic \\ threshold}} & Modified D-max      & \VAR{ dmax['pace'] | s_to_min }           & \VAR{ dmax['heart_rate'] | int }   & \VAR{ '%.1f' | format(dmax['lactate']) }   \\
+                                                         & Cross method        & \VAR{ cross['pace'] | s_to_min }          & \VAR{ cross['heart_rate'] | int }  & \VAR{ '%.1f' | format(cross['lactate']) }  \\
+                                                         & AT4 4 mMol          & \VAR{ at4['pace'] | s_to_min }            & \VAR{ at4['heart_rate'] | int }    & \VAR{ '%.1f' | format(at4['lactate']) }    \\
+      \hline
+      \multirow{2}{*}{\makecell{Aerobic \\ threshold}}   & Baseline + 0.5 mMol & \VAR{ dmax['start_point'][0] | s_to_min } & \VAR{ dmax['start_hr'] | int }     & \VAR{ '%.1f' | format(dmax['start_point'][1]) } \\
+                                                         & AT2 2 mMol          & \VAR{ at2['pace'] | s_to_min }            & \VAR{ at2['heart_rate'] | int }    & \VAR{ '%.1f' | format(at2['lactate']) }
+    \end{tabular}
+    \caption{Rezultati testa}
+  \end{table}
+
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{r|l||c|c|c}
+      Zone  & Training             & Low pace                                            & High pace                                       & Notes     \\
+      \hline \hline
+      1     & Active recovery      & \VAR{ (dmax['pace'] * 2 - 1) | s_to_min }min/km     & \VAR{ (dmax['pace'] * 1.4) | s_to_min }min/km   & 10h+      \\
+      2     & Aerobic Endurance    & \VAR{ (dmax['pace'] * 1.4 - 1) | s_to_min }min/km   & \VAR{ (dmax['pace'] * 1.2) | s_to_min }min/km   & 2-10h     \\
+      3     & Moderate             & \VAR{ (dmax['pace'] * 1.2 - 1) | s_to_min }min/km   & \VAR{ (dmax['pace'] * 1.1) | s_to_min }min/km   & 30-90min  \\
+      4     & Threshold            & \VAR{ (dmax['pace'] * 1.1 - 1) | s_to_min }min/km   & \VAR{ (dmax['pace'] * 0.98) | s_to_min }min/km  & 8-30min   \\
+      5     & VO2max               & \VAR{ (dmax['pace'] * 0.98 - 1) | s_to_min }min/km  & \VAR{ (dmax['pace'] * 0.85) | s_to_min }min/km  & 2-8min    \\
+      6     & Anaerobic capacity   & \VAR{ (dmax['pace'] * 0.85 - 1) | s_to_min }min/km  & \VAR{ (dmax['pace'] * 0.7) | s_to_min }min/km   & 30-90s    \\
+      7     & Specific training    & max                                                 & max                                             & 5-15s     \\
+    \end{tabular}
+    \caption{Zones}
+  \end{table}
+
+
+\end{document}

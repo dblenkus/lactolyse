@@ -12,7 +12,11 @@ from channels.consumer import SyncConsumer
 from channels.generic.websocket import JsonWebsocketConsumer
 
 from lactolyse.executors import executor
-from lactolyse.models import ConconiTestAnalyses, LactateThresholdAnalyses
+from lactolyse.models import (
+    ConconiTestAnalyses,
+    LactateThresholdAnalyses,
+    LactateThresholdRunAnalyses,
+)
 from lactolyse.protocol import GROUP_SESSIONS
 from lactolyse.utils import serialize_model_instance
 
@@ -43,6 +47,52 @@ class RunAnalysisConsumer(SyncConsumer):
         report_path = os.path.join(report_dir.name, report_filename)
 
         results = executor.run('lactate_threshold', report_path, inputs)
+
+        analysis.result_dmax = results['dmax']
+        analysis.result_cross = results['cross']
+        analysis.result_at2 = results['at2']
+        analysis.result_at4 = results['at4']
+
+        with open(report_path, 'rb') as fn:
+            report_file = File(fn)
+            analysis.report = report_file
+
+            analysis.save()
+
+        async_to_sync(self.channel_layer.group_send)(
+            event['notify_channel'],
+            {
+                'type': 'websocket_send',
+                'download_url': reverse(
+                    'download_report',
+                    kwargs={'ref': serialize_model_instance(analysis)},
+                ),
+            },
+        )
+
+    def lactolyse_lactate_run_report(self, event):
+        """Make report for Lactate Thresold Analysis for runners."""
+        analysis = (
+            LactateThresholdRunAnalyses.objects.select_related('athlete')
+            .prefetch_related('lactaterunmeasurement_set')
+            .get(pk=event['analysis_pk'])
+        )
+        measurements = analysis.lactaterunmeasurement_set.order_by('pace').values(
+            'pace', 'heart_rate', 'lactate'
+        )
+
+        inputs = {
+            'pace': [m['pace'] for m in measurements],
+            'heart_rate': [m['heart_rate'] for m in measurements],
+            'lactate': [float(m['lactate']) for m in measurements],
+            'weight': float(analysis.athlete.weight),
+        }
+
+        report_dir = tempfile.TemporaryDirectory()
+        report_filename = '{}.pdf'.format(uuid4().hex)
+        report_path = os.path.join(report_dir.name, report_filename)
+
+        results = executor.run('lactate_threshold_run', report_path, inputs)
 
         analysis.result_dmax = results['dmax']
         analysis.result_cross = results['cross']

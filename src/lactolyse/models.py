@@ -92,6 +92,50 @@ class LactateMeasurement(models.Model):
         )
 
 
+class LactateThresholdRunAnalyses(models.Model):
+    """Lactate Threshold Analyses for runners model."""
+
+    contributor = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL
+    )
+
+    athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
+
+    created = models.DateField(auto_now_add=True)
+
+    report = models.FileField(upload_to=generate_lactate_threshold_name)
+
+    result_dmax = models.IntegerField(null=True)
+
+    result_cross = models.IntegerField(null=True)
+
+    result_at2 = models.IntegerField(null=True)
+
+    result_at4 = models.IntegerField(null=True)
+
+    def __str__(self):
+        """Format model name."""
+        return "athlete: {}, date: {}".format(self.athlete.name, self.created)
+
+
+class LactateRunMeasurement(models.Model):
+    """Lactate Measurement model."""
+
+    analyses = models.ForeignKey(LactateThresholdRunAnalyses, on_delete=models.CASCADE)
+
+    pace = models.IntegerField()
+
+    heart_rate = models.IntegerField()
+
+    lactate = models.DecimalField(max_digits=4, decimal_places=2)
+
+    def __str__(self):
+        """Format model name."""
+        return "name: {}, pace: {}, heart rate: {}, lactate: {}".format(
+            self.analyses.athlete.name, self.pace, self.heart_rate, self.lactate
+        )
+
+
 class ConconiTestAnalyses(models.Model):
     """Lactate Threshold Analyses model."""
 

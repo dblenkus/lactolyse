@@ -18,7 +18,7 @@ class AnalysesRegistry:
         if analysis_name not in self._analyses:
             raise ValueError(
                 "Unknown analysis '{}', select one of the following: {}".format(
-                    analysis, ", ".join(self._analyses.keys())
+                    analysis_name, ", ".join(self._analyses.keys())
                 )
             )
 

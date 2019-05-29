@@ -7,6 +7,12 @@ from lactolyse.registry import registry
 
 TEX_JOB_NAME = 'report'
 
+
+def s_to_min(value):
+    """Convert seconds to minutes."""
+    return "{}:{:02d}".format(int(value // 60), int(value % 60))
+
+
 latex_jinja_env = jinja2.Environment(
     block_start_string=r'\BLOCK{',
     block_end_string=r'}',
@@ -22,6 +28,7 @@ latex_jinja_env = jinja2.Environment(
         'lactolyse', os.path.join('templates', 'lactolyse', 'latex')
     ),
 )
+latex_jinja_env.filters.update({'s_to_min': s_to_min})
 
 
 def validate_analysis(analysis):
