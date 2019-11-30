@@ -22,7 +22,7 @@
     \begin{tabular}{r||c|c|c|}
                            & Pace [min/km]                        & Heart Rate [bpm]                      & Blood Lactate [mMol]                           \\ \hline \hline
       \BLOCK{ for i in range( inputs['pace'] | length) }
-        \VAR{ loop.index } & \VAR{ inputs['pace'][i] | s_to_min } & \VAR{ inputs['heart_rate'][i] | int } & \VAR{ '%.1f' | format(inputs['lactate'][i]) }  \BLOCK{ if not loop.last }\\\BLOCK{ endif }
+        \VAR{ loop.index } & \VAR{ inputs['pace'][i] | s_to_min } & \VAR{ inputs['heart_rate'][i] | int } & \VAR{ '%.2f' | format(inputs['lactate'][i]) }  \BLOCK{ if not loop.last }\\\BLOCK{ endif }
       \BLOCK{ endfor }
     \end{tabular}
     \caption{Meritve}
@@ -95,12 +95,12 @@
     \begin{tabular}{r|r||c|c|c}
                                                          &                     & Pace [min/km]                             & Heart Rate [bpm]                   & \makecell{Blood Lactate \\ {[}mMol]}       \\
       \hline \hline
-      \multirow{3}{*}{\makecell{Anaerobic \\ threshold}} & Modified D-max      & \VAR{ dmax['pace'] | s_to_min }           & \VAR{ dmax['heart_rate'] | int }   & \VAR{ '%.1f' | format(dmax['lactate']) }   \\
-                                                         & Cross method        & \VAR{ cross['pace'] | s_to_min }          & \VAR{ cross['heart_rate'] | int }  & \VAR{ '%.1f' | format(cross['lactate']) }  \\
-                                                         & AT4 4 mMol          & \VAR{ at4['pace'] | s_to_min }            & \VAR{ at4['heart_rate'] | int }    & \VAR{ '%.1f' | format(at4['lactate']) }    \\
+      \multirow{3}{*}{\makecell{Anaerobic \\ threshold}} & Modified D-max      & \VAR{ dmax['pace'] | s_to_min }           & \VAR{ dmax['heart_rate'] | int }   & \VAR{ '%.2f' | format(dmax['lactate']) }   \\
+                                                         & Cross method        & \VAR{ cross['pace'] | s_to_min }          & \VAR{ cross['heart_rate'] | int }  & \VAR{ '%.2f' | format(cross['lactate']) }  \\
+                                                         & AT4 4 mMol          & \VAR{ at4['pace'] | s_to_min }            & \VAR{ at4['heart_rate'] | int }    & \VAR{ '%.2f' | format(at4['lactate']) }    \\
       \hline
-      \multirow{2}{*}{\makecell{Aerobic \\ threshold}}   & Baseline + 0.5 mMol & \VAR{ dmax['start_point'][0] | s_to_min } & \VAR{ dmax['start_hr'] | int }     & \VAR{ '%.1f' | format(dmax['start_point'][1]) } \\
-                                                         & AT2 2 mMol          & \VAR{ at2['pace'] | s_to_min }            & \VAR{ at2['heart_rate'] | int }    & \VAR{ '%.1f' | format(at2['lactate']) }
+      \multirow{2}{*}{\makecell{Aerobic \\ threshold}}   & Baseline + 0.5 mMol & \VAR{ dmax['start_point'][0] | s_to_min } & \VAR{ dmax['start_hr'] | int }     & \VAR{ '%.2f' | format(dmax['start_point'][1]) } \\
+                                                         & AT2 2 mMol          & \VAR{ at2['pace'] | s_to_min }            & \VAR{ at2['heart_rate'] | int }    & \VAR{ '%.2f' | format(at2['lactate']) }
     \end{tabular}
     \caption{Rezultati testa}
   \end{table}
