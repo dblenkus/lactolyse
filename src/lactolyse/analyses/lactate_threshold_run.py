@@ -42,14 +42,10 @@ class LactateThresholdRunAnalyses(BaseAnalysis):
         min_x = lac_poly.min_x
 
         # Find the point where polynomial starts to raise - threshold is
-        # 0.5 - and take only real roots (hopefully there is only one).
-        roots = np.roots(lac_poly.poly - (lac_poly.poly(max_x) + 0.5))
+        # 0.3 - and take only real roots (hopefully there is only one).
+        roots = np.roots(lac_poly.poly - (lac_poly.poly(max_x) + 0.3))
         roots = roots[np.logical_and(np.isreal(roots), roots > min_x, roots < max_x)]
         start_x = min(roots).real
-
-        x_values = lac_poly.x_values[:]
-        x_values = filter(lambda pwr: pwr > start_x, x_values)
-        start_x = list(x_values)[0]
 
         # Calculate the vector cross product.
         v_x = np.poly1d(min_x - start_x)
