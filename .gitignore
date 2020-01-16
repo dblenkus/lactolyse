@@ -4,6 +4,9 @@ __pycache__/
 
 /.vscode/
 
+# Python virtual environment.
+/.venv/
+
 # Ignore files created by setup.py.
 build/
 dist/
