@@ -6,6 +6,7 @@ from material import Layout, Row
 from .models import (
     Athlete,
     ConconiMeasurement,
+    CriticalPowerMeasurement,
     LactateMeasurement,
     LactateRunMeasurement,
 )
@@ -55,6 +56,24 @@ class LactateRunMeasurementForm(forms.ModelForm):
         fields = ['pace', 'heart_rate', 'lactate']
 
     layout = Layout(Row('pace', 'heart_rate', 'lactate'))
+
+    def save(self, analyses, commit=True):
+        """Asign the measurement to the analysis and save it."""
+        self.instance.analyses = analyses
+
+        return super().save(commit=commit)
+
+
+class CriticalPowerMeasurementForm(forms.ModelForm):
+    """Form for CriticalPowerMeasurement model."""
+
+    class Meta:
+        """CriticalPowerForm Meta options."""
+
+        model = CriticalPowerMeasurement
+        fields = ['time', 'power']
+
+    layout = Layout(Row('time', 'power'))
 
     def save(self, analyses, commit=True):
         """Asign the measurement to the analysis and save it."""

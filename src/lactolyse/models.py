@@ -136,6 +136,42 @@ class LactateRunMeasurement(models.Model):
         )
 
 
+class CriticalPowerAnalyses(models.Model):
+    """Lactate Threshold Analyses for runners model."""
+
+    contributor = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL
+    )
+
+    athlete = models.ForeignKey(Athlete, on_delete=models.CASCADE)
+
+    created = models.DateField(auto_now_add=True)
+
+    report = models.FileField(upload_to=generate_lactate_threshold_name)
+
+    result = models.IntegerField(null=True)
+
+    def __str__(self):
+        """Format model name."""
+        return "athlete: {}, date: {}".format(self.athlete.name, self.created)
+
+
+class CriticalPowerMeasurement(models.Model):
+    """Lactate Measurement model."""
+
+    analyses = models.ForeignKey(CriticalPowerAnalyses, on_delete=models.CASCADE)
+
+    time = models.IntegerField()
+
+    power = models.IntegerField()
+
+    def __str__(self):
+        """Format model name."""
+        return "name: {}, time: {}, power: {}".format(
+            self.analyses.athlete.name, self.time, self.power
+        )
+
+
 class ConconiTestAnalyses(models.Model):
     """Lactate Threshold Analyses model."""
 

@@ -14,6 +14,7 @@ from channels.generic.websocket import JsonWebsocketConsumer
 from lactolyse.executors import executor
 from lactolyse.models import (
     ConconiTestAnalyses,
+    CriticalPowerAnalyses,
     LactateThresholdAnalyses,
     LactateThresholdRunAnalyses,
 )
@@ -98,6 +99,48 @@ class RunAnalysisConsumer(SyncConsumer):
         analysis.result_cross = results['cross']
         analysis.result_at2 = results['at2']
         analysis.result_at4 = results['at4']
+
+        with open(report_path, 'rb') as fn:
+            report_file = File(fn)
+            analysis.report = report_file
+
+            analysis.save()
+
+        async_to_sync(self.channel_layer.group_send)(
+            event['notify_channel'],
+            {
+                'type': 'websocket_send',
+                'download_url': reverse(
+                    'download_report',
+                    kwargs={'ref': serialize_model_instance(analysis)},
+                ),
+            },
+        )
+
+    def lactolyse_critical_power_report(self, event):
+        """Make report for Conconi Test Analysis."""
+        analysis = (
+            CriticalPowerAnalyses.objects.select_related('athlete')
+            .prefetch_related('criticalpowermeasurement_set')
+            .get(pk=event['analysis_pk'])
+        )
+        measurements = analysis.criticalpowermeasurement_set.order_by('time').values(
+            'time', 'power'
+        )
+
+        inputs = {
+            'time': [m['time'] for m in measurements],
+            'power': [m['power'] for m in measurements],
+            'weight': float(analysis.athlete.weight),
+        }
+
+        report_dir = tempfile.TemporaryDirectory()
+        report_filename = '{}.pdf'.format(uuid4().hex)
+        report_path = os.path.join(report_dir.name, report_filename)
+
+        results = executor.run('critical_power', report_path, inputs)
+
+        analysis.result = results['result']
 
         with open(report_path, 'rb') as fn:
             report_file = File(fn)

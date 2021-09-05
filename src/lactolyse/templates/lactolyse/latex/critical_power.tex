@@ -1,0 +1,131 @@
+\documentclass{article}
+\title{Critical Power Report}
+\author{Simon Cirnski}
+
+\usepackage[margin=0.7in]{geometry}
+
+\usepackage{makecell}
+\usepackage{multirow}
+
+\usepackage{tikz,pgfplots}
+\usetikzlibrary{calc}
+
+\begin{document}
+
+  \maketitle
+
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{r||c|c|}
+                           & Time [s]                         & Power [W]                         \\
+      \hline \hline
+      \BLOCK{ for i in range( inputs['time'] | length) }
+        \VAR{ loop.index } & \VAR{ inputs['time'][i] | int }  & \VAR{ inputs['power'][i] | int }  \\
+      \BLOCK{ endfor }
+    \end{tabular}
+    \caption{Measurements}
+  \end{table}
+
+  \def\cppoly(#1){\VAR{ cp['power'] } + \VAR{ cp['work'] } / (#1) }
+  \def\limitpoly(#1){\VAR{ cp['power'] } }
+  \def\coordinates{
+    \BLOCK{ for i in range( inputs['time'] | length) }
+      (\VAR{ inputs['time'][i] }, \VAR{ inputs['power'][i] })
+    \BLOCK{ endfor }
+  }
+  \def\xmin{\VAR{ 60 }}
+  \def\xmax{\VAR{ 15360 }}
+  \def\ymin{\VAR{ cp['power'] }}
+  \def\ymax{\cppoly(60)}
+
+  \def\inversepowerpoly(#1){\VAR{ cp['inverse_power_poly'].coef[0] } * (#1) + \VAR{ cp['inverse_power_poly'].coef[1] }}
+  \def\coordinatesi{
+    \BLOCK{ for i in range( inputs['time'] | length) }
+      (\VAR{ inputs['power'][i] }, \VAR{ 1 / inputs['time'][i] })
+    \BLOCK{ endfor }
+  }
+  \def\xmini{\VAR{ cp['power'] }}
+  \def\xmaxi{\VAR{ inputs['power'][0] }}
+  \def\ymaxi{\VAR{ 1 / inputs['time'][0] }}
+
+  \pgfplotsset{
+    axis y line=left,
+    ylabel near ticks,
+    axis x line=bottom,
+    width=8.5cm,
+    height=8.5cm,
+    grid,
+  }
+
+  \begin{tikzpicture}
+  \begin{axis}[
+    ylabel=Power {[}W{]},
+    ytick={0,50,...,1000},
+    xlabel=Time {[}min{]},
+    xtick={60,120,240,480,960,1920,3840,7680,15360},
+    xticklabels={1,2,4,8,16,32,64,128,256},
+    xmode=log,
+    log ticks with fixed point,
+    x tick label style={/pgf/number format/1000 sep=\,},
+    xmin=\xmin,
+    xmax=\xmax,
+    ymin=\ymin - 40,
+    ymax=\ymax + 40,
+  ]
+    \addplot [domain=\xmin+1:\xmax] {\cppoly(x)};
+    \addplot [domain=\xmin:\xmax, thick] {\limitpoly(x)} node[pos=0, above right] {$P=\VAR{ cp['power'] | round | int }W$};
+    \addplot [only marks] coordinates {\coordinates};
+  \end{axis}
+  \end{tikzpicture}
+  \begin{tikzpicture}
+  \begin{axis}[
+    ylabel=\empty,
+    ytick={0,0.001,...,1},
+    scaled y ticks=false,
+    yticklabel style={
+      /pgf/number format/fixed,
+      /pgf/number format/precision=3,
+      /pgf/number format/fixed zerofill
+    },
+    xlabel=Power {[}W{]},
+    xtick={0,50,...,1000},
+    xmin=\xmini - 40,
+    xmax=\xmaxi + 40,
+    ymin=0,
+    ymax=\ymaxi + 0.005,
+  ]
+    \addplot [only marks] coordinates {\coordinatesi};
+    \addplot [domain=\xmini:\xmaxi+40] {\inversepowerpoly(x)} node[pos=0, above right, xshift=0.5cm] {$P=\VAR{ cp['inverse_power'] | round | int }W$};
+  \end{axis}
+  \end{tikzpicture}
+
+
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{r||c|c}
+                    & Critical power [W]                 & Work [kJ]                            \\
+      \hline \hline
+      Results       & \VAR{ cp['power'] | round | int }  & \VAR{ (cp['work']/1000) | round(1) } \\
+    \end{tabular}
+    \caption{Test Results}
+  \end{table}
+
+  \begin{table}[h]
+    \centering
+    \begin{tabular}{r|l||c|c|c|c}
+      Zone  & Training             & Low watts                        & High watts                 & Duration of work      & Notes                                                                                                                                                   \\
+      \hline \hline
+      1     & Active recovery      & 0                                & \VAR{ zones['1'] | int }W  & /                     &  Low intensity training mostly used as recovery betweeen hard trainings and intervals or as easy long training.                                         \\
+      2     & Endurance            & \VAR{ (zones['1'] + 1) | int }W  & \VAR{ zones['2'] | int }W  & /                     &  Still low intensity moslty used for developin aerobin endurance.                                                                                       \\
+      2a    & Tempo                & \VAR{ (zones['2'] + 1) | int }W  & \VAR{ zones['2a'] | int }W & 10-240min             &  Intense endurance used to futher develop aerobic endurance. This intensity is already used as interval training.                                       \\
+      3     & SubThreshold         & \VAR{ (zones['2a'] + 1) | int }W & \VAR{ zones['3'] | int }W  & 10-120min             &  Moderate intensity to develop muscular endurance and aerobic endurance. Used as mid to long intervals.                                                 \\
+      4     & Threshold            & \VAR{ (zones['3'] + 1) | int }W  & \VAR{ zones['4'] | int }W  & 10-30min              &  Intensity used for developing functional power over mid durations and developing Threshold power. Mostly done as interval on the climb or TT intervals \\
+      5     & VO2max               & \VAR{ (zones['4'] + 1) | int }W  & \VAR{ zones['5'] | int }W  & 8-25min               &  High Intensity for developing VO2max and functional power over short and mid durations. Done as interval training.                                     \\
+      6     & Anaerobic capacity   & \VAR{ (zones['5'] + 1) | int }W  & \VAR{ zones['6'] | int }W  & 3-8min                &  Very high intensity for developing anaerobic part of the system that helps us produce power over short periods of time.                                \\
+      7     & Neuromuscular power  & \VAR{ (zones['6'] + 1) | int }W  & max                        & 0.5-2min              &  Maximal power that activates muscular and Neuromuscularpart of our systems. Usually done as sprints of various durations.                              \\
+    \end{tabular}
+    \caption{Zones}
+  \end{table}
+
+
+\end{document}

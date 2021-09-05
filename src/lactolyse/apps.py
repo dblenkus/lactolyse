@@ -12,6 +12,7 @@ class LactolyseConfig(AppConfig):
         # Register Analyses.
         from lactolyse.analyses.lactate_threshold import LactateThresholdAnalyses
         from lactolyse.analyses.lactate_threshold_run import LactateThresholdRunAnalyses
+        from lactolyse.analyses.critical_power import CriticalPowerAnalyses
         from lactolyse.analyses.conconi_test import ConcoinAnalyses
 
         # Start executor.

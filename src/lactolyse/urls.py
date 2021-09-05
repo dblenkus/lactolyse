@@ -13,6 +13,9 @@ urlpatterns = [
         views.lactate_threshold_run_view,
         name='lactate_analyses_run',
     ),
+    path(
+        'tests/critical_power/', views.critical_power_test_view, name='critical_power'
+    ),
     path('tests/conconi/', views.conconi_test_view, name='conconi_test'),
     path('tests/success/', views.analyses_success_view, name='analyses_success'),
     path(
