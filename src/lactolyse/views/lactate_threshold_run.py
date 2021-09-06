@@ -44,13 +44,13 @@ class LactateThresholdRunView(LoginRequiredMixin, MultiFormView):
         return {
             'athlete': {'name': "Domen Blenkuš", 'age': "28", 'weight': 79.5},
             'measurements': [
-                {'pace': 390, 'heart_rate': 135, 'lactate': 0.9},
-                {'pace': 360, 'heart_rate': 142, 'lactate': 1.0},
-                {'pace': 330, 'heart_rate': 150, 'lactate': 1.1},
-                {'pace': 300, 'heart_rate': 156, 'lactate': 1.2},
-                {'pace': 270, 'heart_rate': 162, 'lactate': 2.2},
-                {'pace': 240, 'heart_rate': 170, 'lactate': 5.3},
-                {'pace': 210, 'heart_rate': 176, 'lactate': 10.1},
+                {'pace': '6:30', 'heart_rate': 135, 'lactate': 0.9},
+                {'pace': '6:00', 'heart_rate': 142, 'lactate': 1.0},
+                {'pace': '5:30', 'heart_rate': 150, 'lactate': 1.1},
+                {'pace': '5:00', 'heart_rate': 156, 'lactate': 1.2},
+                {'pace': '4:30', 'heart_rate': 162, 'lactate': 2.2},
+                {'pace': '4:00', 'heart_rate': 170, 'lactate': 5.3},
+                {'pace': '3:30', 'heart_rate': 176, 'lactate': 10.1},
             ],
         }
 

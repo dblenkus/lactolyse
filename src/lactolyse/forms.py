@@ -1,4 +1,6 @@
 """Lactolyse forms."""
+import re
+
 from django import forms
 
 from material import Layout, Row
@@ -55,7 +57,14 @@ class LactateRunMeasurementForm(forms.ModelForm):
         model = LactateRunMeasurement
         fields = ['pace', 'heart_rate', 'lactate']
 
+    pace = forms.CharField()
     layout = Layout(Row('pace', 'heart_rate', 'lactate'))
+
+    def clean_pace(self):
+        data = self.cleaned_data['pace']
+        data = list(map(int, re.split(r":|\.", data)))
+
+        return data[0] if len(data) == 1 else data[0] * 60 + data[1]
 
     def save(self, analyses, commit=True):
         """Asign the measurement to the analysis and save it."""
