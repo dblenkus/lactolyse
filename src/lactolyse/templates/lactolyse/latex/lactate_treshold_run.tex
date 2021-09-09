@@ -34,10 +34,10 @@
       (\VAR{ inputs['pace'][i] }, \VAR{ inputs['lactate'][i] })
     \BLOCK{ endfor }
   }
-  \def\xmin{\VAR{ inputs['pace'][0] }}
-  \def\xmax{\VAR{ inputs['pace'][-1] }}
+  \def\xmin{\VAR{ inputs['pace'][-1] }}
+  \def\xmax{\VAR{ inputs['pace'][0] }}
   \def\ymin{0}
-  \def\ymax{\VAR{ inputs['lactate'][0] }}
+  \def\ymax{\VAR{ inputs['lactate'][-1] }}
 
   \pgfplotsset{
     axis y line=left,

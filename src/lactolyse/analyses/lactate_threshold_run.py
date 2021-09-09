@@ -73,7 +73,7 @@ class LactateThresholdRunAnalyses(BaseAnalysis):
             start_point = max(lac_poly.deriv_roots)
 
         else:
-            start_point = inputs['pace'][-1]
+            start_point = inputs['pace'][0]
 
         min_x = lac_poly.min_x
 
@@ -96,7 +96,7 @@ class LactateThresholdRunAnalyses(BaseAnalysis):
         return {
             'pace': pace,
             'start_point': [start_point, lac_poly.poly(start_point)],
-            'end_point': [inputs['pace'][0], lac_poly.poly(inputs['pace'][0])],
+            'end_point': [inputs['pace'][-1], lac_poly.poly(inputs['pace'][-1])],
             'cross': [pace, start_line(pace)],
             'heart_rate': hr_poly.poly(pace),
             'lactate': lac_poly.poly(pace),
@@ -106,7 +106,7 @@ class LactateThresholdRunAnalyses(BaseAnalysis):
         """Calculate context for at method."""
         roots = np.roots(lac_poly.poly - threshold)
         roots = roots[np.isreal(roots)]
-        roots = filter(lambda val: inputs['pace'][0] < val < inputs['pace'][-1], roots)
+        roots = filter(lambda val: inputs['pace'][-1] < val < inputs['pace'][0], roots)
 
         pace = list(roots)[0].real
 

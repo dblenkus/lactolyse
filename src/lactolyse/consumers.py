@@ -78,7 +78,7 @@ class RunAnalysisConsumer(SyncConsumer):
             .prefetch_related('lactaterunmeasurement_set')
             .get(pk=event['analysis_pk'])
         )
-        measurements = analysis.lactaterunmeasurement_set.order_by('pace').values(
+        measurements = analysis.lactaterunmeasurement_set.order_by('-pace').values(
             'pace', 'heart_rate', 'lactate'
         )
 
